@@ -6,6 +6,7 @@
       <RouterView />
     </div>
   </div>
+  <RouterView />
 </template>
 
 <script setup lang="ts">
