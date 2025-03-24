@@ -1,10 +1,18 @@
 <template>
-  <div class="min-h-screen flex bg-gray-100">
+  <div class="min-h-screen flex bg-gradient-to-br from-primary/5 to-primary/10">
     <div class="w-full flex items-center justify-center p-8">
-      <el-card class="w-full max-w-md border-none shadow-xl">
+      <el-card
+        class="w-full max-w-md border-none shadow-lg backdrop-blur-sm bg-white/90 transition-all duration-300 hover:translate-y-[-2px]"
+        :shadow="'hover'"
+      >
         <template #header>
-          <div class="flex items-center justify-center">
-            <h2 class="text-2xl font-bold text-primary">Register</h2>
+          <div class="flex items-center justify-center space-x-3">
+            <el-icon class="text-3xl text-primary"><UserFilled /></el-icon>
+            <h2
+              class="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent"
+            >
+              Register
+            </h2>
           </div>
         </template>
 
@@ -105,7 +113,7 @@
 </template>
 
 <script setup lang="ts">
-import { User, Lock } from '@element-plus/icons-vue';
+import { User, Lock, UserFilled } from '@element-plus/icons-vue';
 import logo from '@/assets/images/logo.png';
 import { useRegister } from '@/composable/useRegister';
 
@@ -113,6 +121,34 @@ const { isLoading, handleRegister, registerForm, registerFormRef, rules } = useR
 </script>
 
 <style>
+.el-card__header {
+  border-bottom: none;
+}
+
+.el-input__wrapper {
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+.el-input__wrapper.is-focus {
+  box-shadow: 0 0 0 2px rgba(var(--el-color-primary-rgb), 0.2) !important;
+  border-color: var(--el-color-primary) !important;
+}
+
+.el-button--primary {
+  background: linear-gradient(
+    to right,
+    var(--el-color-primary),
+    rgba(var(--el-color-primary-rgb), 0.8)
+  );
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.el-button--primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(var(--el-color-primary-rgb), 0.2);
+}
 .el-card__header {
   border-bottom: none;
 }

@@ -8,7 +8,7 @@
     text-color="#000000"
     router
   >
-    <el-menu-item index="/dashboard">
+    <el-menu-item index="/admin/dashboard">
       <el-icon><Monitor /></el-icon>
       <template #title>
         <span>1. Dashboard</span>
@@ -19,13 +19,13 @@
         <el-icon><Menu /></el-icon>
         <span>2. Menu Management</span>
       </template>
-      <el-menu-item index="/categories">
+      <el-menu-item index="/admin/categories">
         <el-icon><List /></el-icon>
         <template #title>
           <span>2.1 Categories</span>
         </template>
       </el-menu-item>
-      <el-menu-item index="/foods">
+      <el-menu-item index="/admin/foods">
         <el-icon><Food /></el-icon>
         <template #title>
           <span>2.2 Foods</span>

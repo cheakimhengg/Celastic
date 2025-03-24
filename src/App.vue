@@ -1,12 +1,12 @@
 <template>
-  <div class="flex flex-col">
+  <div v-if="$route.path.includes('admin')" class="flex flex-col">
     <Navbar :toggle-sidebar="toggleSidebar" />
     <div class="flex flex-row">
       <Sidebar :is-open="isOpen" />
       <RouterView />
     </div>
   </div>
-  <RouterView />
+  <RouterView v-else />
 </template>
 
 <script setup lang="ts">

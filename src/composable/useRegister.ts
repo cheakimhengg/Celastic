@@ -1,6 +1,6 @@
 import { ref } from 'vue';
 import { getRegister } from './apiCalling';
-import type { FormInstance, FormRules } from 'element-plus';
+import { ElMessage, type FormInstance, type FormRules } from 'element-plus';
 
 export const useRegister = () => {
   const isLoading = ref(false);
@@ -14,13 +14,36 @@ export const useRegister = () => {
   const registerFormRef = ref<FormInstance>();
   const rules = ref<FormRules>({
     email: [
-      { required: true, message: 'Required', trigger: 'blur' },
-      { type: 'email', message: 'Please enter a valid email', trigger: 'blur' },
+      { required: true, message: 'Email is required', trigger: 'blur' },
+      { type: 'email', message: 'Please enter a valid email address', trigger: 'blur' },
+      { max: 50, message: 'Email cannot exceed 50 characters', trigger: 'blur' },
+      {
+        pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+        message: 'Please enter a valid email format',
+        trigger: 'blur',
+      },
     ],
-    username: [{ required: true, message: 'Required', trigger: 'blur' }],
-    password: [{ required: true, message: 'Required', trigger: 'blur' }],
+    username: [
+      { required: true, message: 'Username is required', trigger: 'blur' },
+      { min: 3, message: 'Username must be at least 3 characters', trigger: 'blur' },
+      { max: 20, message: 'Username cannot exceed 20 characters', trigger: 'blur' },
+      {
+        pattern: /^[a-zA-Z0-9_]+$/,
+        message: 'Username can only contain letters, numbers and underscore',
+        trigger: 'blur',
+      },
+    ],
+    password: [
+      { required: true, message: 'Password is required', trigger: 'blur' },
+      { min: 8, message: 'Password must be at least 8 characters', trigger: 'blur' },
+      {
+        pattern: /^(?=.*[a-zA-Z])[a-zA-Z\d@$!%*?&]+$/,
+        message: 'Password must contain at least one letter',
+        trigger: 'blur',
+      },
+    ],
     confirmPassword: [
-      { required: true, message: 'Required', trigger: 'blur' },
+      { required: true, message: 'Please confirm your password', trigger: 'blur' },
       {
         validator: (rule, value, callback) => {
           if (value !== registerForm.value.password) {
@@ -29,7 +52,7 @@ export const useRegister = () => {
             callback();
           }
         },
-        trigger: 'blur',
+        trigger: ['blur', 'change'],
       },
     ],
   });
@@ -52,9 +75,14 @@ export const useRegister = () => {
         password: registerForm.value.password,
       };
       const response = await getRegister(params);
-      console.log('Login response:', response);
+      if (response.statusCode === 200) {
+        ElMessage.success(response.message);
+      } else {
+        ElMessage.error(response.message);
+      }
     } catch (error) {
-      console.error('Error fetching food data:', error);
+      console.error('Registration error:', error);
+      ElMessage.error('Registration failed. Please try again.');
     } finally {
       isLoading.value = false;
     }
