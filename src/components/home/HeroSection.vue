@@ -7,6 +7,7 @@
           <h1 class="text-5xl font-bold leading-tight">
             Digital Menus, Smarter Dining<br />for Modern Restaurants
           </h1>
+          <!-- ass -->
           <p class="text-xl opacity-90">
             Revolutionize your restaurant with digital menus and seamless ordering. Enhance customer
             experience, boost efficiency, and grow your business with our innovative QR menu
