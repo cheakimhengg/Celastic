@@ -51,6 +51,7 @@ export const useLogin = () => {
       const response = await getLogin(params);
       if (response.statusCode === 200) {
         ElMessage.success(response.message);
+        window.location.href = '/admin/dashboard';
       } else {
         ElMessage.error(response.message);
       }

@@ -2,12 +2,12 @@
   <div class="min-h-screen flex bg-gradient-to-br from-primary/5 to-primary/10">
     <div class="w-full flex items-center justify-center p-8">
       <el-card
-        class="w-full max-w-md border-none shadow-lg backdrop-blur-sm bg-white/90 transition-all duration-300 hover:translate-y-[-2px]"
+        class="w-full max-w-md border-none shadow-lg backdrop-blur-sm bg-white/90 transition-all duration-300"
         :shadow="'hover'"
       >
         <template #header>
           <div class="flex items-center justify-center space-x-3">
-            <el-icon class="text-3xl text-primary"><UserFilled /></el-icon>
+            <el-icon class="text-3xl"><UserFilled style="color: #409eff" /></el-icon>
             <h2
               class="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent"
             >
@@ -53,7 +53,7 @@
             <el-form-item>
               <el-button
                 type="primary"
-                class="w-full text-lg h-12 rounded-lg hover:bg-opacity-90 transition-all duration-200"
+                class="w-full text-lg h-12 rounded-lg"
                 :loading="isLoading"
                 native-type="submit"
               >
@@ -120,8 +120,13 @@ const { isLoading, handleLogin, loginFormRef, rules, loginForm } = useLogin();
   transition: all 0.3s ease;
 }
 
-.el-button--primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 6px -1px rgba(var(--el-color-primary-rgb), 0.2);
+:deep(.el-button) {
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+:deep(.el-button:hover) {
+  box-shadow: none !important;
+  transform: none !important;
 }
 </style>

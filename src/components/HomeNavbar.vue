@@ -20,16 +20,10 @@
           </a>
         </div>
 
-        <!-- Auth Buttons -->
-        <div class="flex items-center space-x-4">
+        <!-- Auth Buttons - Hide on mobile -->
+        <div class="hidden md:flex items-center space-x-4">
           <el-button type="primary" @click="$router.push('/login')"> Login </el-button>
-          <el-button
-            type="default"
-            :class="['border-primary text-primary hover:bg-primary hover:text-white']"
-            @click="$router.push('/register')"
-          >
-            Register
-          </el-button>
+          <el-button type="default" @click="$router.push('/register')"> Register </el-button>
         </div>
 
         <!-- Mobile Menu Button -->
@@ -44,17 +38,35 @@
         </div>
       </div>
 
-      <!-- Mobile Menu -->
-      <div v-show="isMobileMenuOpen" class="md:hidden py-4 space-y-4 transition-all duration-200">
-        <a
-          v-for="(item, index) in navItems"
-          :key="index"
-          :href="item.href"
-          class="block text-gray-700 hover:text-primary font-medium transition-colors duration-200"
-          @click.prevent="scrollToSection(item.href)"
-        >
-          {{ item.text }}
-        </a>
+      <!-- Mobile Menu with improved animation -->
+      <div
+        class="md:hidden transition-all duration-300 ease-in-out"
+        :style="{
+          maxHeight: isMobileMenuOpen ? '500px' : '0',
+          opacity: isMobileMenuOpen ? '1' : '0',
+          overflow: 'hidden',
+          padding: isMobileMenuOpen ? '1rem 0' : '0',
+        }"
+      >
+        <div class="space-y-4 px-2">
+          <a
+            v-for="(item, index) in navItems"
+            :key="index"
+            :href="item.href"
+            class="block text-gray-700 hover:text-primary font-medium transition-colors duration-200 py-2"
+            @click.prevent="scrollToSection(item.href)"
+          >
+            {{ item.text }}
+          </a>
+
+          <!-- Auth Buttons in mobile menu -->
+          <div class="flex flex-col space-y-3 pt-4 mt-2 border-t border-gray-200">
+            <el-button type="primary" @click="$router.push('/login')"> Login </el-button>
+          </div>
+          <div class="flex flex-col">
+            <el-button type="default" @click="$router.push('/register')"> Register </el-button>
+          </div>
+        </div>
       </div>
     </div>
   </nav>
@@ -70,7 +82,6 @@ const navItems = [
   { text: 'Home', href: '#hero' },
   { text: 'Features', href: '#features' },
   { text: 'Join Us', href: '#join' },
-  // { text: 'About', href: '#about' },
   { text: 'Pricing', href: '#pricing' },
 ];
 
@@ -86,3 +97,15 @@ const scrollToSection = (href: string) => {
   }
 };
 </script>
+
+<style scoped>
+:deep(.el-button) {
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+:deep(.el-button:hover) {
+  box-shadow: none !important;
+  transform: none !important;
+}
+</style>
