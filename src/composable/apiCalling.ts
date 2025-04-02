@@ -1,12 +1,21 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'https://qr-menu-backend-hxlj.onrender.com/api',
   timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
+
 export const fetchData = async (endpoint: string, params: object) => {
-  const response = await apiClient.post(endpoint, params);
-  return response.data;
+  try {
+    const response = await apiClient.post(endpoint, params);
+    return response.data;
+  } catch (error) {
+    console.error('API Error:', error);
+    throw error;
+  }
 };
 
 export const getLogin = async (params: object) => {
