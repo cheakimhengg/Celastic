@@ -10,13 +10,9 @@ export const fetchData = async (endpoint: string, params: object) => {
 };
 
 export const getLogin = async (params: object) => {
-  return await fetchData('/auth/login', {
-    params: params,
-  });
+  return await fetchData('/auth/login', params);
 };
 
 export const getRegister = async (params: object) => {
-  return await fetchData('/auth/register', {
-    params: params,
-  });
+  return await fetchData('/auth/register', params);
 };
