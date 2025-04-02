@@ -1,5 +1,5 @@
 <template>
-  <nav class="fixed top-0 left-0 w-full bg-white shadow-sm z-50">
+  <nav class="fixed top-0 left-0 w-full bg-white shadow-md z-50">
     <div class="container mx-auto px-4">
       <div class="flex items-center justify-between h-16">
         <!-- Logo -->
@@ -70,7 +70,8 @@ const navItems = [
   { text: 'Home', href: '#hero' },
   { text: 'Features', href: '#features' },
   { text: 'Join Us', href: '#join' },
-  { text: 'About', href: '#about' },
+  // { text: 'About', href: '#about' },
+  { text: 'Pricing', href: '#pricing' },
 ];
 
 const toggleMobileMenu = () => {

@@ -57,7 +57,7 @@
                 :loading="isLoading"
                 native-type="submit"
               >
-                Sign In
+                Login
               </el-button>
             </el-form-item>
           </el-form>

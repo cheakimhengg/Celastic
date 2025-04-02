@@ -82,7 +82,7 @@
                 :loading="isLoading"
                 native-type="submit"
               >
-                Sign Up
+                Register
               </el-button>
             </el-form-item>
           </el-form>

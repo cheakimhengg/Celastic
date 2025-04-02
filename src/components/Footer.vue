@@ -4,7 +4,7 @@
       <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
         <!-- Company Info -->
         <div>
-          <img src="@/assets/images/logo.png" alt="Nhamey" class="h-8 mb-4" />
+          <img src="@/assets/images/logo.png" alt="Nhamey" class="h-12 mb-4" />
           <p class="text-gray-400 text-sm">
             Discover the best local food and restaurants in your area with Nhamey.
           </p>
