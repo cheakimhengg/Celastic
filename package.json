@@ -4,11 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite && npm run lint",
-    "build": "run-p type-check \"build-only {@}\" --",
+    "dev": "vite",
+    "build": "vue-tsc && vite build",
     "preview": "vite preview",
-    "build-only": "vite build",
-    "type-check": "vue-tsc --build",
     "lint": "eslint . --fix",
     "format": "prettier --write src/"
   },
