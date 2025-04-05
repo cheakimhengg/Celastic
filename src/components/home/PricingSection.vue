@@ -40,9 +40,7 @@
         <div
           class="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition-shadow duration-300 border-2 border-primary"
         >
-          <div
-            class="absolute top-0 right-0 bg-primary text-white px-4 py-1 rounded-bl-lg text-sm"
-          >
+          <div class="absolute top-0 right-0 bg-primary text-white px-4 py-1 rounded-bl-lg text-sm">
             Most Popular
           </div>
           <h3 class="text-xl font-bold mb-4">Professional</h3>
@@ -108,5 +106,54 @@ import { Check } from '@element-plus/icons-vue';
 </script>
 
 <style scoped>
-/* Add any specific styling for pricing section here */
+/* Feature Cards Animation */
+.grid.md\:grid-cols-3.gap-8 > div {
+  animation: scaleIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  opacity: 0;
+}
+
+.grid.md\:grid-cols-3.gap-8 > div:nth-child(1) {
+  animation-delay: 0.2s;
+}
+.grid.md\:grid-cols-3.gap-8 > div:nth-child(2) {
+  animation-delay: 0.4s;
+}
+.grid.md\:grid-cols-3.gap-8 > div:nth-child(3) {
+  animation-delay: 0.6s;
+}
+
+/* Feature Cards Animation */
+.bg-white.p-8 {
+  animation: scaleIn 0.5s ease-out forwards;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.bg-white.p-8:hover {
+  transform: translateY(-5px);
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Icon Animation */
+.el-icon {
+  transition: transform 0.3s ease;
+}
+
+.bg-white.p-8:hover .el-icon {
+  transform: scale(1.1);
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
 </style>
