@@ -1,10 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
+
 import Dashboard from '@/views/Dashboard.vue';
-import Food from '@/views/Food.vue';
-import Category from '@/views/Category.vue';
-import Login from '@/views/Login.vue';
-import Register from '@/views/Register.vue';
-import Home from '@/views/Home.vue';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -12,32 +8,32 @@ const router = createRouter({
     {
       path: '/admin/dashboard',
       name: 'dashboard',
-      component: Dashboard,
+      component: Dashboard, 
     },
     {
       path: '/admin/categories',
       name: 'categories',
-      component: () => Category,
+      component: () => import('@/views/Category.vue'), 
     },
     {
       path: '/admin/foods',
       name: 'foods',
-      component: () => Food,
+      component: () => import('@/views/Food.vue'), 
     },
     {
       path: '/login',
       name: 'Login',
-      component: () => Login,
+      component: () => import('@/views/Login.vue'), 
     },
     {
       path: '/register',
       name: 'register',
-      component: () => Register,
+      component: () => import('@/views/Register.vue'), 
     },
     {
       path: '/',
       name: 'Home',
-      component: () => Home,
+      component: () => import('@/views/Home.vue'), 
     },
   ],
 });
