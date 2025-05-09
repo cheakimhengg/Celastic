@@ -1,37 +1,25 @@
 <template>
   <div class="min-h-screen flex bg-gradient-to-br from-primary/5 to-primary/10">
     <div class="w-full flex items-center justify-center p-8">
-      <el-card
-        class="w-full max-w-md border-none shadow-lg backdrop-blur-sm bg-white/90 transition-all duration-300"
-        :shadow="'hover'"
-      >
+      <el-card class="w-full max-w-md border-none shadow-lg backdrop-blur-sm bg-white/90 transition-all duration-300"
+        :shadow="'hover'">
         <template #header>
           <div class="flex items-center justify-center space-x-3">
-            <el-icon class="text-3xl"><UserFilled style="color: #409eff" /></el-icon>
-            <h2
-              class="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent"
-            >
+            <el-icon class="text-3xl">
+              <UserFilled style="color: #409eff" />
+            </el-icon>
+            <h2 class="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
               Login
             </h2>
           </div>
         </template>
 
         <div>
-          <el-form
-            :model="loginForm"
-            :rules="rules"
-            ref="loginFormRef"
-            @submit.prevent="handleLogin"
-          >
+          <el-form :model="loginForm" :rules="rules" ref="loginFormRef" @submit.prevent="handleLogin">
             <el-form-item prop="username">
               <label class="block text-sm font-medium text-gray-700 mb-1">Username</label>
-              <el-input
-                v-model="loginForm.username"
-                placeholder="Enter your username"
-                :prefix-icon="User"
-                size="large"
-                class="rounded-lg"
-              />
+              <el-input v-model="loginForm.username" placeholder="Enter your username" :prefix-icon="User" size="large"
+                class="rounded-lg" />
             </el-form-item>
 
             <el-form-item prop="password">
@@ -39,24 +27,13 @@
                 <label class="block text-sm font-medium text-gray-700">Password</label>
                 <a href="#" class="text-sm text-secondary hover:underline">Forgot password?</a>
               </div>
-              <el-input
-                v-model="loginForm.password"
-                type="password"
-                placeholder="Enter your password"
-                :prefix-icon="Lock"
-                size="large"
-                class="rounded-lg"
-                show-password
-              />
+              <el-input v-model="loginForm.password" type="password" placeholder="Enter your password"
+                :prefix-icon="Lock" size="large" class="rounded-lg" show-password />
             </el-form-item>
 
             <el-form-item>
-              <el-button
-                type="primary"
-                class="w-full text-lg h-12 rounded-lg"
-                :loading="isLoading"
-                native-type="submit"
-              >
+              <el-button type="primary" class="w-full text-lg h-12 rounded-lg" :loading="isLoading"
+                native-type="submit">
                 Login
               </el-button>
             </el-form-item>
@@ -69,9 +46,7 @@
         </div>
       </el-card>
     </div>
-    <div
-      class="hidden lg:flex items-center justify-center w-full bg-primary relative overflow-hidden"
-    >
+    <div class="hidden lg:flex items-center justify-center w-full bg-primary relative overflow-hidden">
       <div class="absolute inset-0 bg-pattern opacity-20"></div>
       <div class="relative z-10 flex flex-col justify-center items-center p-12 text-white">
         <div class="mb-8 relative inline-flex items-center justify-center">
@@ -111,11 +86,9 @@ const { isLoading, handleLogin, loginFormRef, rules, loginForm } = useLogin();
 }
 
 .el-button--primary {
-  background: linear-gradient(
-    to right,
-    var(--el-color-primary),
-    rgba(var(--el-color-primary-rgb), 0.8)
-  );
+  background: linear-gradient(to right,
+      var(--el-color-primary),
+      rgba(var(--el-color-primary-rgb), 0.8));
   border: none;
   transition: all 0.3s ease;
 }

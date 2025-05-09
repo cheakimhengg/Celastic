@@ -1,60 +1,62 @@
 <template>
-    <div class="min-h-screen w-full bg-[#f6f8fb]">
-        <div class="w-full px-4 md:px-8 pt-8">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
-                <h2 class="text-3xl font-bold text-gray-900">Categories</h2>
-            </div>
-            <div
-                class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4 border-b border-gray-200 pb-4">
-                <el-input v-model="search" placeholder="Search categories..." clearable
-                    class="w-full md:w-64 rounded-lg border border-gray-200" />
-                <el-button type="primary" @click="openAddModal" class="self-end md:self-auto">
+    <div class="w-full min-h-screen bg-[#fafbfc] p-6 md:p-10">
+        <!-- Header Row -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
+            <h1 class="text-2xl font-bold text-gray-900">Category Management</h1>
+            <div class="flex items-center gap-3 w-full md:w-auto">
+                <el-input v-model="search" placeholder="Search categories..." class="w-full md:w-72" clearable>
+                    <template #prefix>
+                        <el-icon>
+                            <Search />
+                        </el-icon>
+                    </template>
+                </el-input>
+                <el-button type="primary" @click="openAddModal" class="rounded-xl">
                     <el-icon>
                         <Plus />
                     </el-icon>
-                    Add Category
+                    <span class="ml-1">Add Category</span>
                 </el-button>
-            </div>
-            <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-x-auto w-full">
-                <el-table :data="filteredCategories" stripe border
-                    class="w-full custom-table modern-table min-w-[700px]" :row-class-name="() => 'custom-row'">
-                    <el-table-column prop="name" label="Name" min-width="180" header-class-name="custom-header" />
-                    <el-table-column prop="createdAt" label="Created At" min-width="140"
-                        header-class-name="custom-header" />
-                    <el-table-column prop="modifiedAt" label="Modified At" min-width="140"
-                        header-class-name="custom-header" />
-                    <el-table-column prop="status" label="Status" min-width="100" header-class-name="custom-header">
-                        <template #default="{ row }">
-                            <el-switch v-model="row.status" />
-                        </template>
-                    </el-table-column>
-                    <el-table-column label="Actions" min-width="100" header-class-name="custom-header">
-                        <template #default="{ row }">
-                            <el-button size="small" type="primary" circle plain @click="openEditModal(row)"
-                                class="mr-1">
-                                <el-icon>
-                                    <Edit />
-                                </el-icon>
-                            </el-button>
-                            <el-button size="small" type="danger" circle plain @click="openDeleteModal(row)">
-                                <el-icon>
-                                    <Delete />
-                                </el-icon>
-                            </el-button>
-                        </template>
-                    </el-table-column>
-                </el-table>
-                <div v-if="!filteredCategories.length"
-                    class="text-center text-gray-400 py-12 text-lg bg-white rounded-b-2xl">No
-                    categories found.</div>
             </div>
         </div>
 
+        <!-- Category Table -->
+        <el-card class="p-0">
+            <el-table :data="filteredCategories" stripe class="w-full" height="auto">
+                <el-table-column prop="name" label="Name" min-width="180" />
+                <el-table-column prop="createdAt" label="Created At" min-width="140" />
+                <el-table-column prop="modifiedAt" label="Modified At" min-width="140" />
+                <el-table-column prop="status" label="Status" min-width="100">
+                    <template #default="{ row }">
+                        <el-switch v-model="row.status" />
+                    </template>
+                </el-table-column>
+                <el-table-column label="Actions" min-width="100">
+                    <template #default="{ row }">
+                        <el-button size="small" type="primary" circle plain @click="openEditModal(row)" class="mr-1">
+                            <el-icon>
+                                <Edit />
+                            </el-icon>
+                        </el-button>
+                        <el-button size="small" type="danger" circle plain @click="openDeleteModal(row)">
+                            <el-icon>
+                                <Delete />
+                            </el-icon>
+                        </el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <div v-if="!filteredCategories.length"
+                class="text-center text-gray-400 py-12 text-lg bg-white rounded-b-2xl">
+                No categories found.
+            </div>
+        </el-card>
+
         <!-- Add/Edit Dialog -->
         <el-dialog :model-value="showModal" @close="closeModal" :title="isEdit ? 'Edit Category' : 'Add Category'"
-            width="400px" center>
+            width="400px" class="rounded-2xl">
             <el-form @submit.prevent="isEdit ? updateCategory() : addCategory()" :model="modalCategoryObj"
-                label-width="120px">
+                label-width="120px" class="space-y-2">
                 <el-form-item label="Category Name" :error="modalError">
                     <el-input v-model="modalCategoryObj.name" placeholder="e.g. Pizza, Drinks, Dessert" />
                 </el-form-item>
@@ -64,7 +66,7 @@
                 <el-form-item>
                     <el-button type="primary" @click="isEdit ? updateCategory() : addCategory()">{{ isEdit ? 'Update' :
                         'Add'
-                    }}</el-button>
+                        }}</el-button>
                     <el-button @click="closeModal">Cancel</el-button>
                 </el-form-item>
             </el-form>
@@ -74,7 +76,7 @@
         <el-dialog :model-value="showDeleteModal" @close="closeDeleteModal" title="Delete Category" width="350px"
             center>
             <div class="mb-6 text-gray-700">Are you sure you want to delete <span class="font-semibold">{{
-                deleteTarget?.name
+                    deleteTarget?.name
                     }}</span>?</div>
             <template #footer>
                 <el-button type="danger" @click="confirmDelete">Delete</el-button>
@@ -87,7 +89,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
-import { Plus, Edit, Delete } from '@element-plus/icons-vue'
+import { Plus, Edit, Delete, Search } from '@element-plus/icons-vue'
 
 interface Category {
     name: string
