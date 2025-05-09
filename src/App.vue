@@ -3,7 +3,9 @@
     <Navbar :toggle-sidebar="toggleSidebar" />
     <div class="flex flex-row">
       <Sidebar :is-open="isOpen" />
-      <RouterView />
+      <div class="flex-1 min-w-0">
+        <RouterView />
+      </div>
     </div>
   </div>
   <RouterView v-else />
