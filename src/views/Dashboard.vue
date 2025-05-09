@@ -51,8 +51,7 @@
           <BaseDoughnutChart :chart-data="targetChartData" :chart-options="targetChartOptions" class="w-32 h-32" />
           <div class="absolute flex flex-col items-center">
             <span class="text-3xl font-bold text-primary">85%</span>
-            <span class="text-xs text-primary font-semibold">+8.02% <span class="text-gray-400">from last
-                month</span></span>
+            <span class="text-xs text-primary font-semibold">+8.02%</span>
           </div>
         </div>
         <div class="text-center">

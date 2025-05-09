@@ -76,6 +76,12 @@ export const useRegister = () => {
       };
       const response = await getRegister(params);
       if (response.statusCode === 200) {
+        // Store user info in localStorage
+        if (response.user) {
+          localStorage.setItem('token', response.user.token);
+          localStorage.setItem('username', response.user.username);
+          localStorage.setItem('webID', response.user.webID?.toString() || '');
+        }
         ElMessage.success(response.message);
         window.location.href = '/admin/dashboard';
       } else {
