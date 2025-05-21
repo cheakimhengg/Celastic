@@ -8,6 +8,19 @@ const apiClient = axios.create({
   },
 });
 
+// Add a request interceptor to inject the JWT token
+apiClient.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers = config.headers || {};
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
 export const fetchData = async (endpoint: string, params: object) => {
   try {
     const response = await apiClient.post(endpoint, params);
@@ -24,4 +37,12 @@ export const getLogin = async (params: object) => {
 
 export const getRegister = async (params: object) => {
   return await fetchData('/auth/register', params);
+};
+
+export const getFood = async (params: object) => {
+  return await fetchData('/foods/by-webid', params);
+};
+
+export const createFood = async (params: object) => {
+  return await fetchData('/foods', params);
 };
