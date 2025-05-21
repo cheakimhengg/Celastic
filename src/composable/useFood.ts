@@ -11,7 +11,7 @@ export interface FoodItem {
   category: string;
   imgUrl: string;
   status: 'active' | 'inactive';
-  createdAt: string;
+  updatedAt: string;
 }
 
 // API response types
@@ -23,6 +23,7 @@ interface FoodApiItem {
   description: string;
   status: boolean;
   createdAt: string;
+  updatedAt: string;
 }
 interface FoodApiCategory {
   id: number;
@@ -79,7 +80,6 @@ export const useFood = () => {
         category: foodForm.value.category,
         imgUrl: foodForm.value.imgUrl,
         status: foodForm.value.status,
-        webId: localStorage.getItem('webID'),
       };
       const response = await apiCreateFood(payload);
       if (response.statusCode === 200) {
@@ -114,7 +114,7 @@ export const useFood = () => {
             imgUrl: item.image,
             description: item.description,
             status: item.status ? 'active' : 'inactive',
-            createdAt: item.createdAt,
+            updatedAt: item.updatedAt,
           }))
         );
         foods.value = flatFoods;

@@ -1,6 +1,5 @@
 <template>
-  <div class="w-full min-h-screen bg-[#fafbfc] p-6 md:p-10">
-    <!-- Header Row -->
+  <div class="w-full min-h-screen bg-[#fafbfc] p-6 md:p-10" v-loading="isLoading">
     <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
       <h1 class="text-2xl font-bold text-gray-900">Food Management</h1>
       <div class="flex items-center gap-3 w-full md:w-auto">
@@ -63,9 +62,9 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="createdAt" label="Created" min-width="120">
+        <el-table-column prop="updatedAt" label="Updated" min-width="120">
           <template #default="{ row }">
-            {{ new Date(row.createdAt).toLocaleString() }}
+            {{ new Date(row.updatedAt).toLocaleString() }}
           </template>
         </el-table-column>
         <el-table-column label="Actions" width="120">
@@ -111,7 +110,7 @@
       </el-form>
       <template #footer>
         <el-button @click="dialogVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="saveFood">Save</el-button>
+        <el-button type="primary" @click="saveFood" :loading="isLoading" :disabled="isLoading">Save</el-button>
       </template>
     </el-dialog>
   </div>
@@ -132,7 +131,8 @@ const {
   handleCreateFood,
   foodForm: apiFoodForm,
   foodFormRef,
-  rules
+  rules,
+  isLoading
 } = useFood();
 
 onMounted(() => {
@@ -191,7 +191,6 @@ async function saveFood() {
     await handleCreateFood();
     await fetchFoods();
     dialogVisible.value = false;
-    openAddDialog();
   } else {
     dialogVisible.value = false;
   }
