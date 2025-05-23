@@ -12,22 +12,15 @@
               earnings, comprehensive benefits, and be part of Cambodia's fastest-growing food
               delivery network.
             </p>
-            <el-button
-              type="default"
-              size="large"
+            <el-button type="default" size="large"
               class="!bg-white !text-primary hover:!bg-gray-100 transition-colors animate-fade-up animation-delay-600"
-              @click="handleApplyClick"
-            >
+              @click="handleApplyClick">
               Apply Now
             </el-button>
           </div>
           <div class="hidden lg:block relative h-full min-h-[400px] animate-slide-in-right">
             <div class="absolute inset-0 bg-pattern opacity-20"></div>
-            <img
-              src="@/assets/images/delivery.svg"
-              alt="Delivery Partner"
-              class="absolute bottom-0 right-0 w-4/5"
-            />
+            <img src="@/assets/images/delivery.svg" alt="Delivery Partner" class="absolute bottom-0 right-0 w-4/5" />
           </div>
         </div>
       </div>
@@ -66,6 +59,7 @@ const handleApplyClick = () => {
   from {
     background-position: 0 0;
   }
+
   to {
     background-position: 60px 60px;
   }

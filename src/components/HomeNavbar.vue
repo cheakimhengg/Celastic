@@ -9,13 +9,9 @@
 
         <!-- Navigation Links -->
         <div class="hidden md:flex items-center space-x-8">
-          <a
-            v-for="(item, index) in navItems"
-            :key="index"
-            :href="item.href"
+          <a v-for="(item, index) in navItems" :key="index" :href="item.href"
             class="text-gray-700 hover:text-primary font-medium transition-colors duration-200"
-            @click.prevent="scrollToSection(item.href)"
-          >
+            @click.prevent="scrollToSection(item.href)">
             {{ item.text }}
           </a>
         </div>
@@ -28,34 +24,26 @@
 
         <!-- Mobile Menu Button -->
         <div class="md:hidden">
-          <el-button
-            @click="toggleMobileMenu"
-            class="!p-2 !border-none hover:!bg-primary/5"
-            :class="{ '!text-primary': isMobileMenuOpen }"
-          >
-            <el-icon><component :is="isMobileMenuOpen ? Close : Menu" /></el-icon>
+          <el-button @click="toggleMobileMenu" class="!p-2 !border-none hover:!bg-primary/5"
+            :class="{ '!text-primary': isMobileMenuOpen }">
+            <el-icon>
+              <component :is="isMobileMenuOpen ? Close : Menu" />
+            </el-icon>
           </el-button>
         </div>
       </div>
 
       <!-- Mobile Menu with improved animation -->
-      <div
-        class="md:hidden transition-all duration-300 ease-in-out"
-        :style="{
-          maxHeight: isMobileMenuOpen ? '500px' : '0',
-          opacity: isMobileMenuOpen ? '1' : '0',
-          overflow: 'hidden',
-          padding: isMobileMenuOpen ? '1rem 0' : '0',
-        }"
-      >
+      <div class="md:hidden transition-all duration-300 ease-in-out" :style="{
+        maxHeight: isMobileMenuOpen ? '500px' : '0',
+        opacity: isMobileMenuOpen ? '1' : '0',
+        overflow: 'hidden',
+        padding: isMobileMenuOpen ? '1rem 0' : '0',
+      }">
         <div class="space-y-4 px-2">
-          <a
-            v-for="(item, index) in navItems"
-            :key="index"
-            :href="item.href"
+          <a v-for="(item, index) in navItems" :key="index" :href="item.href"
             class="block text-gray-700 hover:text-primary font-medium transition-colors duration-200 py-2"
-            @click.prevent="scrollToSection(item.href)"
-          >
+            @click.prevent="scrollToSection(item.href)">
             {{ item.text }}
           </a>
 

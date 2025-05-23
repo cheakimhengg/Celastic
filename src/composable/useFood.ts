@@ -6,39 +6,12 @@ import {
   deleteFood as apiDeleteFood,
   updateFood as apiUpdateFood,
 } from './apiCalling';
+import type { FoodItem, FoodApiCategory } from '@/models/food';
 
-// Food item type for frontend
-export interface FoodItem {
-  id: string;
-  foodName: string;
-  description: string;
-  price: number;
-  category: string;
-  imgUrl: string;
-  status: 'active' | 'inactive';
-  updatedAt: string;
-}
-
-// API response types
-interface FoodApiItem {
-  id: string;
-  name: string;
-  price: number;
-  image: string;
-  description: string;
-  status: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
-interface FoodApiCategory {
-  id: number;
-  category: string;
-  items: FoodApiItem[];
-}
-
+// Composable for food management
 export const useFood = () => {
+  // State
   const isLoading = ref(false);
-  // Form state
   const foodForm = ref({
     foodName: '',
     description: '',
@@ -47,7 +20,6 @@ export const useFood = () => {
     imgUrl: '',
     status: true,
   });
-
   const foodFormRef = ref<FormInstance>();
   const rules = ref<FormRules>({
     foodName: [
@@ -66,33 +38,40 @@ export const useFood = () => {
     imgUrl: [{ required: true, message: 'Image URL is required', trigger: 'blur' }],
     status: [{ required: true, message: 'Status is required', trigger: 'change' }],
   });
-
-  // Foods list for frontend
   const foods = ref<FoodItem[]>([]);
 
-  // Validate and create food
-  const handleCreateFood = async () => {
-    if (!foodFormRef.value) return;
+  // Fetch all foods
+  const fetchFoods = async () => {
+    isLoading.value = true;
     try {
-      await foodFormRef.value.validate();
-      await createFood();
-    } catch {
-      // Validation failed, do nothing
+      const webId = localStorage.getItem('webID');
+      const params = { webId };
+      const response = await getFood(params);
+      if (response.statusCode === 200 && Array.isArray(response.foodData)) {
+        foods.value = (response.foodData as FoodApiCategory[]).flatMap((cat) =>
+          (cat.items || []).map((item) => ({
+            id: item.id,
+            foodName: item.name,
+            category: cat.category,
+            price: item.price,
+            imgUrl: item.image,
+            description: item.description,
+            status: item.status ? 'active' : 'inactive',
+            updatedAt: item.updatedAt,
+          }))
+        );
+      } else {
+        ElMessage.error(response.message || 'Failed to fetch foods.');
+      }
+    } catch (error) {
+      console.error('Fetch foods error:', error);
+      ElMessage.error('Failed to fetch foods.');
+    } finally {
+      isLoading.value = false;
     }
   };
 
-  // Validate and update food
-  const handleUpdateFood = async (food: FoodItem) => {
-    if (!foodFormRef.value) return;
-    try {
-      await foodFormRef.value.validate();
-      await updateFood(food);
-    } catch {
-      // Validation failed, do nothing
-    }
-  };
-
-  // Create food API call
+  // Create food
   const createFood = async () => {
     try {
       isLoading.value = true;
@@ -119,7 +98,7 @@ export const useFood = () => {
     }
   };
 
-  // Update food API call
+  // Update food
   const updateFood = async (food: FoodItem) => {
     try {
       isLoading.value = true;
@@ -147,44 +126,11 @@ export const useFood = () => {
     }
   };
 
-  // Fetch foods from API and map to frontend format
-  const fetchFoods = async () => {
-    isLoading.value = true;
-    try {
-      const webId = localStorage.getItem('webID');
-      const params = { webId };
-      const response = await getFood(params);
-      if (response.statusCode === 200 && Array.isArray(response.foodData)) {
-        // Map backend data to frontend format
-        const flatFoods: FoodItem[] = (response.foodData as FoodApiCategory[]).flatMap((cat) =>
-          (cat.items || []).map((item) => ({
-            id: item.id,
-            foodName: item.name,
-            category: cat.category,
-            price: item.price,
-            imgUrl: item.image,
-            description: item.description,
-            status: item.status ? 'active' : 'inactive',
-            updatedAt: item.updatedAt,
-          }))
-        );
-        foods.value = flatFoods;
-      } else {
-        ElMessage.error(response.message || 'Failed to fetch foods.');
-      }
-    } catch (error) {
-      console.error('Fetch foods error:', error);
-      ElMessage.error('Failed to fetch foods.');
-    } finally {
-      isLoading.value = false;
-    }
-  };
-
   // Delete food
-  const handleDeleteFood = async (foodId: string) => {
+  const deleteFood = async (foodId: string) => {
     try {
       isLoading.value = true;
-      const response = await apiDeleteFood({ foodId: foodId });
+      const response = await apiDeleteFood({ foodId });
       if (response.statusCode === 200) {
         ElMessage.success(response.message || 'Food deleted successfully!');
         await fetchFoods();
@@ -199,15 +145,40 @@ export const useFood = () => {
     }
   };
 
+  // Form handlers for UI
+  const handleCreateFood = async () => {
+    if (!foodFormRef.value) return;
+    try {
+      await foodFormRef.value.validate();
+      await createFood();
+    } catch {
+      return;
+    }
+  };
+
+  const handleUpdateFood = async (food: FoodItem) => {
+    if (!foodFormRef.value) return;
+    try {
+      await foodFormRef.value.validate();
+      await updateFood(food);
+    } catch {
+      return;
+    }
+  };
+
+  const handleDeleteFood = async (foodId: string) => {
+    await deleteFood(foodId);
+  };
+
   return {
-    isLoading,
-    foodForm,
-    rules,
-    handleCreateFood,
-    handleDeleteFood,
-    handleUpdateFood,
-    foodFormRef,
-    fetchFoods,
     foods,
+    fetchFoods,
+    handleCreateFood,
+    handleUpdateFood,
+    handleDeleteFood,
+    foodForm,
+    foodFormRef,
+    rules,
+    isLoading,
   };
 };

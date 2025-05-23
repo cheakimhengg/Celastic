@@ -66,8 +66,7 @@
 import { User, Lock, UserFilled } from '@element-plus/icons-vue';
 import logo from '@/assets/images/logo.png';
 import { useLogin } from '@/composable/useLogin';
-
-const { isLoading, handleLogin, loginFormRef, rules, loginForm } = useLogin();
+const { isLoading, loginForm, handleLogin, loginFormRef, rules } = useLogin();
 </script>
 
 <style>

@@ -13,12 +13,7 @@
             solutions.
           </p>
           <div class="flex gap-4 pt-4">
-            <el-button
-              type="default"
-              size="large"
-              class="!bg-white !text-primary"
-              @click="$router.push('/register')"
-            >
+            <el-button type="default" size="large" class="!bg-white !text-primary" @click="$router.push('/register')">
               Get Started
             </el-button>
           </div>
@@ -41,18 +36,20 @@
 }
 
 /* Hero Section Animations */
-.text-white.space-y-6 > * {
+.text-white.space-y-6>* {
   animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   opacity: 0;
 }
 
-.text-white.space-y-6 > :nth-child(1) {
+.text-white.space-y-6> :nth-child(1) {
   animation-delay: 0.2s;
 }
-.text-white.space-y-6 > :nth-child(2) {
+
+.text-white.space-y-6> :nth-child(2) {
   animation-delay: 0.4s;
 }
-.text-white.space-y-6 > :nth-child(3) {
+
+.text-white.space-y-6> :nth-child(3) {
   animation-delay: 0.6s;
 }
 
@@ -65,6 +62,7 @@
   from {
     background-position: 0 0;
   }
+
   to {
     background-position: 60px 60px;
   }
@@ -75,6 +73,7 @@
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

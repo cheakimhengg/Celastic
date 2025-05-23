@@ -1,23 +1,15 @@
 <template>
-  <el-input
-    v-model="input"
-    size="large"
-    style="font-size: 1rem; height: 45px"
-    placeholder="Search by name or category"
-  >
+  <el-input v-model="input" size="large" style="font-size: 1rem; height: 45px" placeholder="Search by name or category">
     <template #prefix>
-      <el-icon size="20" color="black"><Search /></el-icon>
+      <el-icon size="20" color="black">
+        <Search />
+      </el-icon>
     </template>
 
     <template #suffix>
-      <el-icon
-        v-if="input"
-        size="20"
-        color="black"
-        @click="clearInput"
-        class="cursor-pointer mr-2.5"
-        ><CircleClose
-      /></el-icon>
+      <el-icon v-if="input" size="20" color="black" @click="clearInput" class="cursor-pointer mr-2.5">
+        <CircleClose />
+      </el-icon>
     </template>
   </el-input>
 </template>

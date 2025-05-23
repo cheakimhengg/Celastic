@@ -8,8 +8,6 @@
     <div class="flex items-center gap-4 user-name text-right">
       <el-icon class="relative cursor-pointer hover:text-primary transition-colors duration-200">
         <Bell />
-        <!-- <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 font-bold shadow"
-          style="font-size:10px;">1</span> -->
       </el-icon>
       <span class="mx-2 text-gray-800 capitalize whitespace-nowrap">{{ username.charAt(0).toUpperCase() +
         username.slice(1) }}</span>

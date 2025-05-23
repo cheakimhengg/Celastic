@@ -18,7 +18,7 @@
           <strong>Order ID:</strong> {{ selectedOrder.id }}<br />
           <strong>Customer:</strong> {{ selectedOrder.customer }}<br />
           <strong>Status:</strong> <el-tag :type="statusType(selectedOrder.status)">{{ selectedOrder.status
-          }}</el-tag><br />
+            }}</el-tag><br />
           <strong>Date:</strong> {{ new Date(selectedOrder.date).toLocaleString() }}<br />
         </div>
         <el-table :data="selectedOrder.items" border size="small">

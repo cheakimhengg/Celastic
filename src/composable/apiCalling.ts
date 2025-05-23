@@ -52,5 +52,9 @@ export const deleteFood = async (params: object) => {
 };
 
 export const updateFood = async (params: object) => {
-  return await fetchData('/foods', params);
+  return await fetchData('/foods/update', params);
+};
+
+export const getCategory = async (params: object) => {
+  return await fetchData('/categories', params);
 };
