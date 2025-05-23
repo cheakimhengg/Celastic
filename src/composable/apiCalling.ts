@@ -46,3 +46,11 @@ export const getFood = async (params: object) => {
 export const createFood = async (params: object) => {
   return await fetchData('/foods', params);
 };
+
+export const deleteFood = async (params: object) => {
+  return await fetchData('/foods/delete', params);
+};
+
+export const updateFood = async (params: object) => {
+  return await fetchData('/foods', params);
+};

@@ -72,7 +72,7 @@
             <el-button size="small" @click="editFood(row)" circle><el-icon>
                 <Edit />
               </el-icon></el-button>
-            <el-button size="small" type="danger" @click="deleteFood(/* row: FoodItem */)" circle><el-icon>
+            <el-button size="small" type="danger" @click="deleteFood(row)" circle><el-icon>
                 <Delete />
               </el-icon></el-button>
           </template>
@@ -83,29 +83,29 @@
     <!-- Add/Edit Food Dialog -->
     <el-dialog v-model="dialogVisible" :title="dialogMode === 'add' ? 'Add Food' : 'Edit Food'" width="400px"
       class="rounded-2xl">
-      <el-form :model="apiFoodForm" :rules="rules" ref="foodFormRef" label-width="90px" class="space-y-2">
+      <el-form :model="foodForm" :rules="rules" ref="foodFormRef" label-width="90px" class="space-y-2">
         <el-form-item label="Name">
-          <el-input v-model="apiFoodForm.foodName" placeholder="Food name" />
+          <el-input v-model="foodForm.foodName" placeholder="Food name" />
         </el-form-item>
         <el-form-item label="Category">
-          <el-select v-model="apiFoodForm.category" placeholder="Select category">
+          <el-select v-model="foodForm.category" placeholder="Select category">
             <el-option v-for="cat in categories" :key="cat" :label="cat" :value="cat" />
           </el-select>
         </el-form-item>
         <el-form-item label="Price">
-          <el-input v-model.number="apiFoodForm.price" type="number" min="0" placeholder="Price" />
+          <el-input v-model.number="foodForm.price" type="number" min="0" placeholder="Price" />
         </el-form-item>
         <el-form-item label="Image">
-          <el-input v-model="apiFoodForm.imgUrl" placeholder="Image URL" />
+          <el-input v-model="foodForm.imgUrl" placeholder="Image URL" />
         </el-form-item>
         <el-form-item label="Status">
-          <el-select v-model="apiFoodForm.status" placeholder="Select status">
+          <el-select v-model="foodForm.status" placeholder="Select status">
             <el-option label="Active" :value="true" />
             <el-option label="Inactive" :value="false" />
           </el-select>
         </el-form-item>
         <el-form-item label="Description">
-          <el-input v-model="apiFoodForm.description" type="textarea" placeholder="Description" />
+          <el-input v-model="foodForm.description" type="textarea" placeholder="Description" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -129,7 +129,9 @@ const {
   foods,
   fetchFoods,
   handleCreateFood,
-  foodForm: apiFoodForm,
+  handleDeleteFood,
+  handleUpdateFood,
+  foodForm,
   foodFormRef,
   rules,
   isLoading
@@ -148,6 +150,7 @@ const filterStatus = ref('');
 // Dialog state
 const dialogVisible = ref(false);
 const dialogMode = ref<'add' | 'edit'>('add');
+const editFoodId = ref<string | null>(null);
 
 const filteredFoods = computed(() => {
   return foods.value.filter((f: FoodItem) => {
@@ -162,7 +165,7 @@ const filteredFoods = computed(() => {
 
 function openAddDialog() {
   dialogMode.value = 'add';
-  apiFoodForm.value = {
+  foodForm.value = {
     foodName: '',
     description: '',
     price: 0,
@@ -175,7 +178,7 @@ function openAddDialog() {
 
 function editFood(row: FoodItem) {
   dialogMode.value = 'edit';
-  apiFoodForm.value = {
+  foodForm.value = {
     foodName: row.foodName,
     description: row.description,
     price: row.price,
@@ -183,21 +186,39 @@ function editFood(row: FoodItem) {
     imgUrl: row.imgUrl,
     status: row.status === 'active',
   };
+  editFoodId.value = row.id;
   dialogVisible.value = true;
 }
 
 async function saveFood() {
-  if (dialogMode.value === 'add') {
-    await handleCreateFood();
-    await fetchFoods();
-    dialogVisible.value = false;
-  } else {
-    dialogVisible.value = false;
-  }
+  // Validate the form before proceeding
+  await foodFormRef.value?.validate(async (valid: boolean) => {
+    if (!valid) return; // Stop if not valid
+
+    if (dialogMode.value === 'add') {
+      await handleCreateFood();
+      await fetchFoods();
+      dialogVisible.value = false;
+    } else {
+      if (editFoodId.value) {
+        await handleUpdateFood({
+          id: editFoodId.value,
+          foodName: foodForm.value.foodName,
+          description: foodForm.value.description,
+          price: foodForm.value.price,
+          category: foodForm.value.category,
+          imgUrl: foodForm.value.imgUrl,
+          status: foodForm.value.status ? 'active' : 'inactive',
+          updatedAt: new Date().toISOString(),
+        });
+      }
+      dialogVisible.value = false;
+    }
+  });
 }
 
-function deleteFood(/* row: FoodItem */) {
-  // Implement delete logic with API if needed
+async function deleteFood(row: FoodItem) {
+  await handleDeleteFood(row.id);
 }
 
 function resetFilters() {
