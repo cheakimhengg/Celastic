@@ -31,12 +31,18 @@
           <span>2.2 Foods</span>
         </template>
       </el-menu-item>
+      <el-menu-item index="/admin/orders">
+        <router-link to="/admin/orders">
+          <el-icon><Tickets /></el-icon>
+          Orders
+        </router-link>
+      </el-menu-item>
     </el-sub-menu>
   </el-menu>
 </template>
 
 <script lang="ts" setup>
-import { Menu, Monitor, List, Food } from '@element-plus/icons-vue';
+import { Menu, Monitor, List, Food, Tickets } from '@element-plus/icons-vue';
 
 const props = defineProps({
   isOpen: {
