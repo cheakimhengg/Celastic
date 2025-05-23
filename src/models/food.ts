@@ -26,3 +26,11 @@ export interface FoodApiCategory {
   category: string;
   items: FoodApiItem[];
 }
+
+export interface Category {
+  id: string;
+  name: string;
+  status: boolean;
+  createdAt: string;
+  modifiedAt: string;
+}

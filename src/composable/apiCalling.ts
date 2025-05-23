@@ -58,3 +58,15 @@ export const updateFood = async (params: object) => {
 export const getCategory = async (params: object) => {
   return await fetchData('/categories', params);
 };
+
+export const createCategory = async (params: object) => {
+  return await fetchData('/categories', params);
+};
+
+export const updateCategory = async (params: object) => {
+  return await fetchData('/categories/update', params);
+};
+
+export const deleteCategory = async (params: object) => {
+  return await fetchData('/categories/delete', params);
+};

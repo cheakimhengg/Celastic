@@ -83,7 +83,8 @@
     <!-- Add/Edit Food Dialog -->
     <el-dialog v-model="dialogVisible" :title="dialogMode === 'add' ? 'Add Food' : 'Edit Food'" width="420px"
       class="rounded-2xl" @close="closeDialog">
-      <el-form :model="foodForm" :rules="rules" ref="foodFormRef" label-width="100px" class="space-y-4 px-2 pt-2 pb-0">
+      <el-form :model="foodForm" :rules="rules" ref="foodFormRef" label-width="100px" class="space-y-4 px-2 pt-2 pb-0"
+        label-position="left">
         <el-form-item label="Name" prop="foodName">
           <el-input v-model="foodForm.foodName" placeholder="Enter food name" clearable />
         </el-form-item>
