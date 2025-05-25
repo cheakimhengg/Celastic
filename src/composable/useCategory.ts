@@ -33,22 +33,14 @@ export const useCategory = () => {
       const webId = localStorage.getItem('webID');
       const params = { webId };
       const response = await getCategory(params);
-      if (response.statusCode === 200 && Array.isArray(response.categoryData)) {
-        categories.value = response.categoryData
-          .map((cat: unknown) => {
-            if (typeof cat === 'object' && cat !== null && 'id' in cat && 'name' in cat) {
-              const c = cat as Record<string, unknown>;
-              return {
-                id: String(c.id),
-                name: String(c.name),
-                status: Boolean(c.status),
-                createdAt: String(c.createdAt),
-                modifiedAt: String(c.modifiedAt),
-              };
-            }
-            return null;
-          })
-          .filter(Boolean) as Category[];
+      if (response.statusCode === 200 && Array.isArray(response.categories)) {
+        categories.value = response.categories.map((cat: Category) => ({
+          id: String(cat._id),
+          name: String(cat.categoryName),
+          status: Boolean(cat.status),
+          createdAt: String(cat.createdAt),
+          modifiedAt: String(cat.updatedAt),
+        })) as Category[];
       } else {
         ElMessage.error(response.message || 'Failed to fetch categories.');
       }
@@ -65,7 +57,7 @@ export const useCategory = () => {
     try {
       isLoading.value = true;
       const payload = {
-        name: categoryForm.value.name,
+        categoryName: categoryForm.value.name,
         status: categoryForm.value.status,
       };
       const response = await apiCreateCategory(payload);
@@ -88,7 +80,7 @@ export const useCategory = () => {
     try {
       isLoading.value = true;
       const payload = {
-        id: category.id,
+        categoryId: category.id,
         name: category.name,
         status: category.status,
       };

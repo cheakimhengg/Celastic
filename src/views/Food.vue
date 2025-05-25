@@ -90,7 +90,7 @@
         </el-form-item>
         <el-form-item label="Category" prop="category">
           <el-select v-model="foodForm.category" placeholder="Select category" clearable>
-            <el-option v-for="cat in categories" :key="cat" :label="cat" :value="cat" />
+            <el-option v-for="cat in categories" :key="cat._id" :label="cat.name" :value="cat.name" />
           </el-select>
         </el-form-item>
         <el-form-item label="Price" prop="price">
@@ -124,9 +124,8 @@
 import { ref, computed, onMounted, nextTick } from 'vue';
 import { Search, Filter, Plus, Edit, Delete } from '@element-plus/icons-vue';
 import { useFood } from '@/composable/useFood';
+import { useCategory } from '@/composable/useCategory';
 import type { FoodItem } from '@/models/food';
-
-const categories = ref(['Pizza', 'Burger', 'Salad', 'Dessert', 'Drink']);
 
 const {
   foods,
@@ -139,6 +138,12 @@ const {
   rules,
   isLoading
 } = useFood();
+
+// Use categories from API
+const {
+  categories,
+  fetchCategories
+} = useCategory();
 
 const search = ref('');
 const showFilter = ref(false);
@@ -234,5 +239,8 @@ function resetFilters() {
   filterStatus.value = '';
 }
 
-onMounted(fetchFoods);
+onMounted(() => {
+  fetchFoods();
+  fetchCategories();
+});
 </script>

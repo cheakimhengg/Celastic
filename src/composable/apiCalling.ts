@@ -60,7 +60,7 @@ export const getCategory = async (params: object) => {
 };
 
 export const createCategory = async (params: object) => {
-  return await fetchData('/categories', params);
+  return await fetchData('/categories/create', params);
 };
 
 export const updateCategory = async (params: object) => {

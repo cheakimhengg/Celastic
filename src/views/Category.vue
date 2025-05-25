@@ -41,11 +41,21 @@
     <el-card class="p-0">
       <el-table :data="filteredCategories" stripe class="w-full" height="auto" :loading="isLoading">
         <el-table-column prop="name" label="Name" min-width="180" />
-        <el-table-column prop="createdAt" label="Created At" min-width="140" />
-        <el-table-column prop="modifiedAt" label="Modified At" min-width="140" />
         <el-table-column prop="status" label="Status" min-width="100">
           <template #default="{ row }">
-            <el-switch v-model="row.status" />
+            <el-tag :type="row.status ? 'success' : 'info'">
+              {{ row.status ? 'Active' : 'Inactive' }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="createdAt" label="Created At" min-width="140">
+          <template #default="{ row }">
+            {{ new Date(row.createdAt).toLocaleString() }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="modifiedAt" label="Modified At" min-width="140">
+          <template #default="{ row }">
+            {{ new Date(row.modifiedAt).toLocaleString() }}
           </template>
         </el-table-column>
         <el-table-column label="Actions" min-width="100">
@@ -55,7 +65,7 @@
                 <Edit />
               </el-icon>
             </el-button>
-            <el-button size="small" type="danger" circle plain @click="openDeleteModal(row)">
+            <el-button size="small" type="danger" circle plain @click="handleDeleteCategory(row.id)">
               <el-icon>
                 <Delete />
               </el-icon>
@@ -88,17 +98,6 @@
         </div>
       </template>
     </el-dialog>
-
-    <!-- Delete Confirmation Dialog -->
-    <el-dialog :model-value="showDeleteModal" @close="closeDeleteModal" title="Delete Category" width="350px" center>
-      <div class="mb-6 text-gray-700">Are you sure you want to delete <span class="font-semibold">{{
-        deleteTarget?.name
-          }}</span>?</div>
-      <template #footer>
-        <el-button type="danger" :loading="isLoading" @click="confirmDelete">Delete</el-button>
-        <el-button @click="closeDeleteModal">Cancel</el-button>
-      </template>
-    </el-dialog>
   </div>
 </template>
 
@@ -111,8 +110,6 @@ import type { Category } from '@/models/food'
 const search = ref('')
 const dialogVisible = ref(false)
 const dialogMode = ref<'add' | 'edit'>('add')
-const showDeleteModal = ref(false)
-const deleteTarget = ref<Category | null>(null)
 const showFilter = ref(false)
 const filterStatus = ref('')
 let editTarget: Category | null = null
@@ -178,19 +175,6 @@ async function onSubmit() {
       dialogVisible.value = false
     }
   })
-}
-async function openDeleteModal(cat: Category) {
-  deleteTarget.value = cat
-  showDeleteModal.value = true
-}
-async function closeDeleteModal() {
-  showDeleteModal.value = false
-}
-async function confirmDelete() {
-  if (deleteTarget.value) {
-    await handleDeleteCategory(deleteTarget.value.id)
-    showDeleteModal.value = false
-  }
 }
 
 function resetFilters() {
