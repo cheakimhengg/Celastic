@@ -6,7 +6,7 @@ import {
   deleteFood as apiDeleteFood,
   updateFood as apiUpdateFood,
 } from './apiCalling';
-import type { FoodItem, FoodApiCategory } from '@/models/food';
+import type { FoodItem, FoodApiCategory, FoodApiItem } from '@/models/food';
 
 // Composable for food management
 export const useFood = () => {
@@ -48,8 +48,8 @@ export const useFood = () => {
       const params = { webId };
       const response = await getFood(params);
       if (response.statusCode === 200 && Array.isArray(response.foodData)) {
-        foods.value = (response.foodData as FoodApiCategory[]).flatMap((cat) =>
-          (cat.items || []).map((item) => ({
+        foods.value = (response.foodData as FoodApiCategory[]).flatMap((cat: FoodApiCategory) =>
+          (cat.items || []).map((item: FoodApiItem) => ({
             id: item.id,
             foodName: item.name,
             category: cat.category,
@@ -103,7 +103,7 @@ export const useFood = () => {
     try {
       isLoading.value = true;
       const payload = {
-        id: food.id,
+        foodId: food.id,
         foodName: food.foodName,
         description: food.description,
         price: food.price,

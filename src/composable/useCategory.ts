@@ -10,15 +10,17 @@ import type { Category } from '@/models/food';
 
 export const useCategory = () => {
   const isLoading = ref(false);
-  const categoryForm = ref({
-    name: '',
+  // Form state for add/edit dialog. For new, _id/createdAt/updatedAt are empty.
+  const categoryForm = ref<Omit<Category, '_id'> & { _id?: string }>({
+    _id: '',
+    categoryName: '',
     status: true,
     createdAt: '',
-    modifiedAt: '',
+    updatedAt: '',
   });
   const categoryFormRef = ref<FormInstance>();
   const rules = ref<FormRules>({
-    name: [
+    categoryName: [
       { required: true, message: 'Category name is required', trigger: 'blur' },
       { min: 2, message: 'Category name must be at least 2 characters', trigger: 'blur' },
     ],
@@ -34,13 +36,8 @@ export const useCategory = () => {
       const params = { webId };
       const response = await getCategory(params);
       if (response.statusCode === 200 && Array.isArray(response.categories)) {
-        categories.value = response.categories.map((cat: Category) => ({
-          id: String(cat._id),
-          name: String(cat.categoryName),
-          status: Boolean(cat.status),
-          createdAt: String(cat.createdAt),
-          modifiedAt: String(cat.updatedAt),
-        })) as Category[];
+        // Use API shape directly
+        categories.value = response.categories as Category[];
       } else {
         ElMessage.error(response.message || 'Failed to fetch categories.');
       }
@@ -57,7 +54,7 @@ export const useCategory = () => {
     try {
       isLoading.value = true;
       const payload = {
-        categoryName: categoryForm.value.name,
+        categoryName: categoryForm.value.categoryName,
         status: categoryForm.value.status,
       };
       const response = await apiCreateCategory(payload);
@@ -80,8 +77,8 @@ export const useCategory = () => {
     try {
       isLoading.value = true;
       const payload = {
-        categoryId: category.id,
-        name: category.name,
+        categoryId: category._id,
+        categoryName: category.categoryName,
         status: category.status,
       };
       const response = await apiUpdateCategory(payload);

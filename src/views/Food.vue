@@ -28,9 +28,9 @@
 
     <!-- Filter Dropdown (optional, simple) -->
     <el-card v-if="showFilter" class="mb-6 p-4 max-w-xl">
-      <div class="flex flex-col md:flex-row gap-4 items-center">
-        <el-select v-model="filterCategory" placeholder="Category" clearable class="w-full md:w-48">
-          <el-option v-for="cat in categories" :key="cat" :label="cat" :value="cat" />
+      <div class="flex flex-col md:flex-row gap-4 items-center w-full">
+        <el-select v-model="filterCategory" placeholder="Category" clearable class="w-full">
+          <el-option v-for="cat in categories" :key="cat._id" :label="cat.categoryName" :value="cat.categoryName" />
         </el-select>
         <el-select v-model="filterStatus" placeholder="Status" clearable class="w-full md:w-48">
           <el-option label="Active" value="active" />
@@ -90,7 +90,7 @@
         </el-form-item>
         <el-form-item label="Category" prop="category">
           <el-select v-model="foodForm.category" placeholder="Select category" clearable>
-            <el-option v-for="cat in categories" :key="cat._id" :label="cat.name" :value="cat.name" />
+            <el-option v-for="cat in categories" :key="cat._id" :label="cat.categoryName" :value="cat.categoryName" />
           </el-select>
         </el-form-item>
         <el-form-item label="Price" prop="price">

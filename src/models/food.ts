@@ -29,7 +29,7 @@ export interface FoodApiCategory {
 
 export interface Category {
   _id: string;
-  name: string;
+  categoryName: string;
   status: boolean;
   createdAt: string;
   updatedAt: string;

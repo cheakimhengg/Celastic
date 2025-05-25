@@ -29,8 +29,8 @@
 
     <!-- Filter Dropdown -->
     <el-card v-if="showFilter" class="mb-6 p-4 max-w-xl">
-      <div class="flex flex-col md:flex-row gap-4 items-center">
-        <el-select v-model="filterStatus" placeholder="Status" clearable class="w-full md:w-48">
+      <div class="flex flex-col md:flex-row gap-4 items-center w-full">
+        <el-select v-model="filterStatus" placeholder="Status" clearable class="w-full">
           <el-option label="Active" :value="true" />
           <el-option label="Inactive" :value="false" />
         </el-select>
@@ -40,7 +40,7 @@
 
     <el-card class="p-0">
       <el-table :data="filteredCategories" stripe class="w-full" height="auto" :loading="isLoading">
-        <el-table-column prop="name" label="Name" min-width="180" />
+        <el-table-column prop="categoryName" label="Name" min-width="180" />
         <el-table-column prop="status" label="Status" min-width="100">
           <template #default="{ row }">
             <el-tag :type="row.status ? 'success' : 'info'">
@@ -53,9 +53,9 @@
             {{ new Date(row.createdAt).toLocaleString() }}
           </template>
         </el-table-column>
-        <el-table-column prop="modifiedAt" label="Modified At" min-width="140">
+        <el-table-column prop="updatedAt" label="Modified At" min-width="140">
           <template #default="{ row }">
-            {{ new Date(row.modifiedAt).toLocaleString() }}
+            {{ new Date(row.updatedAt).toLocaleString() }}
           </template>
         </el-table-column>
         <el-table-column label="Actions" min-width="100">
@@ -65,7 +65,7 @@
                 <Edit />
               </el-icon>
             </el-button>
-            <el-button size="small" type="danger" circle plain @click="handleDeleteCategory(row.id)">
+            <el-button size="small" type="danger" circle plain @click="handleDeleteCategory(row._id)">
               <el-icon>
                 <Delete />
               </el-icon>
@@ -78,13 +78,13 @@
     <!-- Add/Edit Category Dialog -->
     <el-dialog v-model="dialogVisible" :title="dialogMode === 'add' ? 'Add Category' : 'Edit Category'" width="420px"
       class="rounded-2xl" @close="closeDialog">
-      <el-form :model="modalCategoryObj" :rules="rules" ref="categoryFormRef" label-width="120px"
+      <el-form :model="categoryForm" :rules="rules" ref="categoryFormRef" label-width="120px"
         class="space-y-4 px-2 pt-2 pb-0" label-position="left">
-        <el-form-item label="Category Name" prop="name">
-          <el-input v-model="modalCategoryObj.name" placeholder="e.g. Pizza, Drinks, Dessert" clearable />
+        <el-form-item label="Category Name" prop="categoryName">
+          <el-input v-model="categoryForm.categoryName" placeholder="e.g. Pizza, Drinks, Dessert" clearable />
         </el-form-item>
         <el-form-item label="Status" prop="status">
-          <el-select v-model="modalCategoryObj.status" placeholder="Select status" clearable>
+          <el-select v-model="categoryForm.status" placeholder="Select status" clearable>
             <el-option label="Active" :value="true" />
             <el-option label="Inactive" :value="false" />
           </el-select>
@@ -130,15 +130,13 @@ const {
 const filteredCategories = computed(() => {
   let cats = categories.value
   if (search.value) {
-    cats = cats.filter(cat => cat.name.toLowerCase().includes(search.value.toLowerCase()))
+    cats = cats.filter(cat => cat.categoryName.toLowerCase().includes(search.value.toLowerCase()))
   }
   if (filterStatus.value !== '') {
-    cats = cats.filter(cat => String(cat.status) === filterStatus.value)
+    cats = cats.filter(cat => String(cat.status) === String(filterStatus.value))
   }
   return cats
 })
-
-const modalCategoryObj = ref<Category>({ name: '', status: true, createdAt: '', modifiedAt: '', id: '' })
 
 onMounted(() => {
   fetchCategories()
@@ -146,13 +144,15 @@ onMounted(() => {
 
 function openAddModal() {
   dialogMode.value = 'add'
-  modalCategoryObj.value = { name: '', status: true, createdAt: '', modifiedAt: '', id: '' }
+  // Reset form for new category
+  categoryForm.value = { _id: '', categoryName: '', status: true, createdAt: '', updatedAt: '' }
   if (categoryFormRef.value) categoryFormRef.value.clearValidate()
   dialogVisible.value = true
 }
 function openEditModal(cat: Category) {
   dialogMode.value = 'edit'
-  modalCategoryObj.value = { ...cat }
+  // Copy the selected category into the form
+  categoryForm.value = { ...cat }
   if (categoryFormRef.value) categoryFormRef.value.clearValidate()
   editTarget = cat
   dialogVisible.value = true
@@ -167,11 +167,10 @@ async function onSubmit() {
   await categoryFormRef.value.validate(async (valid: boolean) => {
     if (!valid) return
     if (dialogMode.value === 'add') {
-      categoryForm.value = { ...modalCategoryObj.value }
       await handleCreateCategory()
       dialogVisible.value = false
     } else if (editTarget) {
-      await handleUpdateCategory({ ...modalCategoryObj.value, id: editTarget.id })
+      await handleUpdateCategory({ ...categoryForm.value, _id: editTarget._id } as Category)
       dialogVisible.value = false
     }
   })
