@@ -44,8 +44,9 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import { Search } from '@element-plus/icons-vue';
+import { useRouter } from 'vue-router';
 import OrderTable from '../components/home/OrderTable.vue';
+import type { TabPaneName } from 'element-plus';
 
 interface OrderItem {
   name: string;

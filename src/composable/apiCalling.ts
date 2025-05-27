@@ -70,3 +70,19 @@ export const updateCategory = async (params: object) => {
 export const deleteCategory = async (params: object) => {
   return await fetchData('/categories/delete', params);
 };
+
+export const getTable = async (params: object) => {
+  return await fetchData('/tables', params);
+};
+
+export const createTable = async (params: object) => {
+  return await fetchData('/tables/create', params);
+};
+
+export const deleteTable = async (params: object) => {
+  return await fetchData('/tables/delete', params);
+};
+
+export const updateTable = async (params: object) => {
+  return await fetchData('/tables/update', params);
+};

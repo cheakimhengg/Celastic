@@ -48,6 +48,14 @@
           Orders
         </router-link>
       </el-menu-item>
+      <el-menu-item index="/admin/tables">
+        <router-link to="/admin/tables">
+          <el-icon>
+            <List />
+          </el-icon>
+          Tables
+        </router-link>
+      </el-menu-item>
     </el-sub-menu>
   </el-menu>
 </template>

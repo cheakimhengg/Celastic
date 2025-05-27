@@ -26,6 +26,11 @@ const router = createRouter({
       component: () => import('@/views/Order.vue'),
     },
     {
+      path: '/admin/tables',
+      name: 'tables',
+      component: () => import('@/views/TableManagement.vue'),
+    },
+    {
       path: '/login',
       name: 'Login',
       component: () => import('@/views/Login.vue'),
