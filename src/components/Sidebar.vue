@@ -40,20 +40,20 @@
         </el-icon>
         <span>3. Order Management</span>
       </template>
-      <el-menu-item index="/admin/orders">
-        <router-link to="/admin/orders">
-          <el-icon>
-            <Tickets />
-          </el-icon>
-          Orders
-        </router-link>
-      </el-menu-item>
       <el-menu-item index="/admin/tables">
         <router-link to="/admin/tables">
           <el-icon>
             <List />
           </el-icon>
           Tables
+        </router-link>
+      </el-menu-item>
+      <el-menu-item index="/admin/orders">
+        <router-link to="/admin/orders">
+          <el-icon>
+            <Tickets />
+          </el-icon>
+          Orders
         </router-link>
       </el-menu-item>
     </el-sub-menu>

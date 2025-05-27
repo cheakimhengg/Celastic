@@ -1,7 +1,8 @@
 export interface Table {
   id: string;
   name: string;
-  status: 'Normal' | 'VIP';
+  status: 'available' | 'busy';
+  type: 'normal' | 'vip' | 'exclusive';
   people: number;
   createdAt: string;
 }

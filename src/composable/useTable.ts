@@ -13,11 +13,13 @@ export const useTable = () => {
   const isLoading = ref(false);
   const tableForm = ref({
     status: '',
+    type: '',
     people: 1,
   });
   const tableFormRef = ref<FormInstance>();
   const rules = ref<FormRules>({
     status: [{ required: true, message: 'Status is required', trigger: 'change' }],
+    type: [{ required: true, message: 'Type is required', trigger: 'change' }],
     people: [
       { required: true, message: 'People is required', trigger: 'blur' },
       { type: 'number', min: 1, message: 'People must be at least 1', trigger: 'blur' },
@@ -33,17 +35,23 @@ export const useTable = () => {
       const params = { webId };
       const response = await getTable(params);
       if (response.statusCode === 200 && Array.isArray(response.tables)) {
-        tables.value = response.tables.map((item: Record<string, unknown>) => ({
-          id: item.tableId as string,
-          name: item.tableId as string,
-          status:
-            typeof item.status === 'string' && item.status.toLowerCase() === 'vip'
-              ? 'VIP'
-              : 'Normal',
-          people: item.people,
-          createdAt: item.createdAt as string,
-          _id: item._id as string,
-        }));
+        tables.value = response.tables.map((item: Record<string, unknown>) => {
+          let status = '';
+          if (typeof item.status === 'string') {
+            const s = item.status.toLowerCase();
+            if (s.includes('avail')) status = 'available';
+            else if (s.includes('busy')) status = 'busy';
+          }
+          return {
+            id: item.tableId as string,
+            name: item.tableId as string,
+            status,
+            type: item.type as string,
+            people: item.people,
+            createdAt: item.createdAt as string,
+            _id: item._id as string,
+          };
+        });
       } else {
         ElMessage.error(response.message || 'Failed to fetch tables.');
       }
@@ -61,6 +69,7 @@ export const useTable = () => {
       isLoading.value = true;
       const payload = {
         status: tableForm.value.status,
+        type: tableForm.value.type,
         people: tableForm.value.people,
       };
       const response = await apiCreateTable(payload);
@@ -80,8 +89,9 @@ export const useTable = () => {
 
   // Update table
   const updateTable = async (payload: {
-    tableId: string;
-    status: 'VIP' | 'Normal';
+    _id: string;
+    status: string;
+    type: string;
     people: number;
   }) => {
     try {
@@ -102,10 +112,10 @@ export const useTable = () => {
   };
 
   // Delete table
-  const deleteTable = async (tableId: string) => {
+  const deleteTable = async (_id: string) => {
     try {
       isLoading.value = true;
-      const response = await apiDeleteTable({ tableId });
+      const response = await apiDeleteTable({ _id });
       if (response.statusCode === 200) {
         ElMessage.success(response.message || 'Table deleted successfully!');
         await fetchTables();
@@ -132,8 +142,9 @@ export const useTable = () => {
   };
 
   const handleUpdateTable = async (payload: {
-    tableId: string;
-    status: 'VIP' | 'Normal';
+    _id: string;
+    status: string;
+    type: string;
     people: number;
   }) => {
     await updateTable(payload);
@@ -144,13 +155,25 @@ export const useTable = () => {
    * Accepts a row object with _id or id.
    */
   const handleDeleteTable = async (row: { _id?: string; id?: string }) => {
-    const tableId = row._id || row.id;
-    if (!tableId) {
+    const _id = row._id || row.id;
+    if (!_id) {
       ElMessage.error('No table ID found for deletion.');
       return;
     }
-    await deleteTable(tableId);
+    await deleteTable(_id);
   };
+
+  function resetTableForm() {
+    tableForm.value.status = '';
+    tableForm.value.type = '';
+    tableForm.value.people = 1;
+  }
+
+  function setTableForm(row: Record<string, unknown>) {
+    tableForm.value.status = typeof row.status === 'string' ? row.status.toLowerCase() : '';
+    tableForm.value.type = row.type as string;
+    tableForm.value.people = Number(row.people);
+  }
 
   return {
     tables,
@@ -162,5 +185,7 @@ export const useTable = () => {
     tableFormRef,
     rules,
     isLoading,
+    resetTableForm,
+    setTableForm,
   };
 };

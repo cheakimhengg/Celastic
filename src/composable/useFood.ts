@@ -44,8 +44,8 @@ export const useFood = () => {
   const fetchFoods = async () => {
     isLoading.value = true;
     try {
-      const webId = localStorage.getItem('webID');
-      const params = { webId };
+      const username = localStorage.getItem('username');
+      const params = { username };
       const response = await getFood(params);
       if (response.statusCode === 200 && Array.isArray(response.foodData)) {
         foods.value = (response.foodData as FoodApiCategory[]).flatMap((cat: FoodApiCategory) =>
