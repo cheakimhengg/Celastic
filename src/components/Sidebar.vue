@@ -12,13 +12,13 @@
     <el-sub-menu index="2">
       <template #title>
         <el-icon>
-          <Menu />
+          <List />
         </el-icon>
         <span>2. Menu Management</span>
       </template>
       <el-menu-item index="/admin/categories">
         <el-icon>
-          <List />
+          <Menu />
         </el-icon>
         <template #title>
           <span>2.1 Categories</span>
@@ -41,27 +41,43 @@
         <span>3. Order Management</span>
       </template>
       <el-menu-item index="/admin/tables">
-        <router-link to="/admin/tables">
-          <el-icon>
-            <List />
-          </el-icon>
-          Tables
-        </router-link>
+        <el-icon>
+          <Grid />
+        </el-icon>
+        <template #title>
+          <span>3.1 Tables</span>
+        </template>
       </el-menu-item>
       <el-menu-item index="/admin/orders">
-        <router-link to="/admin/orders">
-          <el-icon>
-            <Tickets />
-          </el-icon>
-          Orders
-        </router-link>
+        <el-icon>
+          <Tickets />
+        </el-icon>
+        <template #title>
+          <span>3.2 Orders</span>
+        </template>
+      </el-menu-item>
+    </el-sub-menu>
+    <el-sub-menu index="4">
+      <template #title>
+        <el-icon>
+          <PieChart />
+        </el-icon>
+        <span>4. Report Management</span>
+      </template>
+      <el-menu-item index="/admin/reports">
+        <el-icon>
+          <PieChart />
+        </el-icon>
+        <template #title>
+          <span>4.1 Reports</span>
+        </template>
       </el-menu-item>
     </el-sub-menu>
   </el-menu>
 </template>
 
 <script lang="ts" setup>
-import { Menu, Monitor, List, Food, Tickets, Histogram } from '@element-plus/icons-vue';
+import { Menu, List, Monitor, Food, Tickets, Histogram, PieChart, Grid } from '@element-plus/icons-vue';
 
 const props = defineProps({
   isOpen: {

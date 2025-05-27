@@ -69,18 +69,25 @@
             {{ new Date(row.createdAt).toLocaleString() }}
           </template>
         </el-table-column>
-        <el-table-column label="Actions" width="120">
+        <el-table-column label="Actions" width="140">
           <template #default="scope">
-            <el-button size="small" type="primary" circle plain @click="openEditDialog(scope.row)" class="mr-1">
-              <el-icon>
-                <Edit />
-              </el-icon>
-            </el-button>
-            <el-button type="danger" size="small" @click="handleDeleteTable(scope.row)" circle>
-              <el-icon>
-                <Delete />
-              </el-icon>
-            </el-button>
+            <div class="flex items-center gap-2 justify-center">
+              <el-button size="small" type="info" circle plain @click="openQrDialog(scope.row)">
+                <el-icon>
+                  <View />
+                </el-icon>
+              </el-button>
+              <el-button size="small" type="primary" circle plain @click="openEditDialog(scope.row)">
+                <el-icon>
+                  <Edit />
+                </el-icon>
+              </el-button>
+              <el-button size="small" type="danger" circle plain @click="handleDeleteTable(scope.row)">
+                <el-icon>
+                  <Delete />
+                </el-icon>
+              </el-button>
+            </div>
           </template>
         </el-table-column>
       </el-table>
@@ -116,14 +123,28 @@
         </div>
       </template>
     </el-dialog>
+
+    <!-- QR Code Dialog -->
+    <el-dialog v-model="qrDialogVisible" :title="`QR Code for Table ${qrTableName}`" width="350px">
+      <div class="flex flex-col items-center gap-4">
+        <qrcode-vue :value="qrUrl" :size="200" id="table-qr-canvas" class="mb-2" />
+        <el-input v-model="qrUrl" readonly class="mb-2" />
+        <div class="flex gap-2">
+          <el-button @click="copyQrUrl" :icon="CopyDocument">Copy URL</el-button>
+          <el-button @click="downloadQrCode" :icon="Download">Download QR</el-button>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, nextTick, computed } from 'vue';
-import { Edit, Delete, Search, Filter } from '@element-plus/icons-vue';
+import { Edit, Delete, Search, Filter, View, CopyDocument, Download } from '@element-plus/icons-vue';
 import { useTable } from '@/composable/useTable';
 import type { Table } from '@/models/table';
+import { ElMessage } from 'element-plus';
+import QrcodeVue from 'qrcode.vue';
 
 const search = ref('');
 const showFilter = ref(false);
@@ -133,6 +154,13 @@ const filterType = ref('');
 const dialogVisible = ref(false);
 const dialogMode = ref<'add' | 'edit'>('add');
 const editTarget = ref<Record<string, unknown> | null>(null);
+
+// QR code dialog state
+const qrDialogVisible = ref(false);
+const qrUrl = ref('');
+const qrTableId = ref('');
+const qrTableName = ref('');
+const username = localStorage.getItem('username') || '';
 
 const {
   tables,
@@ -204,6 +232,28 @@ async function onSubmit() {
       dialogVisible.value = false;
     }
   });
+}
+
+function openQrDialog(table: Table) {
+  qrTableId.value = table._id;
+  qrTableName.value = table.type === 'vip' ? 'VIP' : table.type === 'exclusive' ? 'Exclusive' : 'Normal';
+  qrUrl.value = `https://nhamey-order.vercel.app/${username}/${table._id}`;
+  qrDialogVisible.value = true;
+}
+
+function copyQrUrl() {
+  navigator.clipboard.writeText(qrUrl.value);
+  ElMessage.success('URL copied!');
+}
+
+function downloadQrCode() {
+  const canvas = document.querySelector('#table-qr-canvas') as HTMLCanvasElement;
+  if (canvas) {
+    const link = document.createElement('a');
+    link.href = canvas.toDataURL('image/png');
+    link.download = `table-${qrTableId.value}-qr.png`;
+    link.click();
+  }
 }
 
 onMounted(() => {

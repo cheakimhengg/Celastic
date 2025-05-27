@@ -5,6 +5,7 @@ export interface Table {
   type: 'normal' | 'vip' | 'exclusive';
   people: number;
   createdAt: string;
+  _id: string;
 }
 
 export interface TableApiItem {
