@@ -12,12 +12,16 @@ export const useTable = () => {
   // State
   const isLoading = ref(false);
   const tableForm = ref({
+    tableId: '',
     status: '',
     type: '',
     people: 1,
   });
   const tableFormRef = ref<FormInstance>();
   const rules = ref<FormRules>({
+    tableId: [
+      { required: true, message: 'Table ID is required', trigger: 'blur' }
+    ],
     status: [{ required: true, message: 'Status is required', trigger: 'change' }],
     type: [{ required: true, message: 'Type is required', trigger: 'change' }],
     people: [
@@ -43,11 +47,10 @@ export const useTable = () => {
             else if (s.includes('busy')) status = 'busy';
           }
           return {
-            id: item.tableId as string,
-            name: item.tableId as string,
+            tableId: String(item.tableId ?? ''),
             status,
             type: item.type as string,
-            people: item.people,
+            people: Number(item.people),
             createdAt: item.createdAt as string,
             _id: item._id as string,
           };
@@ -68,6 +71,7 @@ export const useTable = () => {
     try {
       isLoading.value = true;
       const payload = {
+        tableId: tableForm.value.tableId,
         status: tableForm.value.status,
         type: tableForm.value.type,
         people: tableForm.value.people,
@@ -90,13 +94,21 @@ export const useTable = () => {
   // Update table
   const updateTable = async (payload: {
     _id: string;
+    tableId: string;
     status: string;
     type: string;
     people: number;
   }) => {
     try {
       isLoading.value = true;
-      const response = await apiUpdateTable(payload);
+      const updatePayload = {
+        _id: payload._id,
+        tableId: payload.tableId,
+        status: payload.status,
+        type: payload.type,
+        people: payload.people,
+      };
+      const response = await apiUpdateTable(updatePayload);
       if (response.statusCode === 200) {
         ElMessage.success(response.message || 'Table updated successfully!');
         await fetchTables();
@@ -143,6 +155,7 @@ export const useTable = () => {
 
   const handleUpdateTable = async (payload: {
     _id: string;
+    tableId: string;
     status: string;
     type: string;
     people: number;
@@ -164,12 +177,14 @@ export const useTable = () => {
   };
 
   function resetTableForm() {
+    tableForm.value.tableId = '';
     tableForm.value.status = '';
     tableForm.value.type = '';
     tableForm.value.people = 1;
   }
 
   function setTableForm(row: Record<string, unknown>) {
+    tableForm.value.tableId = String(row.tableId ?? '');
     tableForm.value.status = typeof row.status === 'string' ? row.status.toLowerCase() : '';
     tableForm.value.type = row.type as string;
     tableForm.value.people = Number(row.people);

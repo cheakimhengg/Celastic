@@ -38,11 +38,7 @@
     </el-card>
     <el-card class="p-0">
       <el-table :data="filteredTables" stripe class="w-full" height="auto" :loading="isLoading">
-        <el-table-column label="ID" width="80">
-          <template #default="{ $index }">
-            {{ $index + 1 }}
-          </template>
-        </el-table-column>
+        <el-table-column prop="tableId" label="Table ID" min-width="100" />
         <el-table-column prop="status" label="Status" min-width="100">
           <template #default="{ row }">
             <el-tag :type="row.status === 'available' ? 'success' : 'danger'" effect="plain">
@@ -113,6 +109,9 @@
         </el-form-item>
         <el-form-item label="People" prop="people">
           <el-input-number v-model="tableForm.people" :min="1" :max="20" />
+        </el-form-item>
+        <el-form-item label="Table ID" prop="tableId">
+          <el-input v-model="tableForm.tableId" placeholder="Enter table ID" clearable />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -225,10 +224,11 @@ async function onSubmit() {
       const _id = (editTarget.value._id || editTarget.value.id) as string;
       await handleUpdateTable({
         _id,
+        tableId: tableForm.value.tableId,
         status: tableForm.value.status as 'available' | 'busy',
         type: tableForm.value.type as 'normal' | 'vip' | 'exclusive',
         people: tableForm.value.people,
-      } as { _id: string; status: 'available' | 'busy'; type: 'normal' | 'vip' | 'exclusive'; people: number });
+      } as { _id: string; tableId: string; status: 'available' | 'busy'; type: 'normal' | 'vip' | 'exclusive'; people: number });
       dialogVisible.value = false;
     }
   });

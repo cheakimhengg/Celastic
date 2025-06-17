@@ -86,3 +86,11 @@ export const deleteTable = async (params: object) => {
 export const updateTable = async (params: object) => {
   return await fetchData('/tables/update', params);
 };
+
+export const getOrders = async (params: object) => {
+  return await fetchData('/getorder', params);
+};
+
+export const updateOrder = async (params: object) => {
+  return await fetchData('/payment-status', params);
+};
