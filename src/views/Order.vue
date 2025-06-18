@@ -49,23 +49,26 @@
         </el-table-column>
         <el-table-column label="Items" min-width="250">
           <template #default="{ row }">
-            <div>
+            <div v-if="row.displayItems.length">
               <div v-for="item in row.displayItems" :key="item._id" style="display: flex; align-items: center; gap: 8px;">
                 <span style="font-weight: 500;">{{ item.foodId?.foodName || 'Unknown Item' }}</span>
                 <el-tag size="small" type="info" effect="plain" round>x{{ item.quantity }}</el-tag>
               </div>
             </div>
+            <div v-else>
+              <span class="text-gray-400">No items</span>
+            </div>
           </template>
         </el-table-column>
         <el-table-column prop="totalPrice" label="Total" width="120" align="right">
           <template #default="{ row }">
-            <span class="font-medium text-gray-900">${{ row.totalPrice.toFixed(2) }}</span>
+            <span class="font-medium text-gray-900">${{ (row.totalPrice ?? 0).toFixed(2) }}</span>
           </template>
         </el-table-column>
         <el-table-column label="Status" width="120" align="center">
           <template #default="{ row }">
-            <el-tag size="small" :type="row.displayType === 'pending' ? 'warning' : row.displayType === 'ready' ? 'primary' : 'info'" effect="plain">
-              {{ row.displayType.charAt(0).toUpperCase() + row.displayType.slice(1) }}
+            <el-tag size="small" :type="getStatusType(row.status)" effect="plain">
+              {{ row.status.charAt(0).toUpperCase() + row.status.slice(1) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -84,7 +87,7 @@
         <el-table-column label="Actions" width="120" align="center">
           <template #default="{ row }">
             <div class="flex items-center justify-center gap-2">
-              <el-button size="small" @click="viewOrder(row)" circle><el-icon><View /></el-icon></el-button>
+              <el-button size="small" @click="handleViewOrder(row)" circle><el-icon><View /></el-icon></el-button>
               <el-button size="small" type="primary" @click="editOrder(row)" circle><el-icon><Edit /></el-icon></el-button>
             </div>
           </template>
@@ -131,8 +134,8 @@
                     <p class="text-sm text-gray-500">Quantity: {{ item.quantity }}</p>
                   </div>
                   <div class="text-right">
-                    <p class="text-sm text-gray-500">${{ item.foodId?.price.toFixed(2) || '0.00' }} each</p>
-                    <p class="font-medium">${{ ((item.foodId?.price || 0) * item.quantity).toFixed(2) }}</p>
+                    <p class="text-sm text-gray-500">${{ (item.foodId?.price ?? 0).toFixed(2) }} each</p>
+                    <p class="font-medium">${{ ((item.foodId?.price ?? 0) * item.quantity).toFixed(2) }}</p>
                   </div>
                 </div>
               </div>
@@ -148,8 +151,8 @@
                     <p class="text-sm text-gray-500">Quantity: {{ item.quantity }}</p>
                   </div>
                   <div class="text-right">
-                    <p class="text-sm text-gray-500">${{ item.foodId?.price.toFixed(2) || '0.00' }} each</p>
-                    <p class="font-medium">${{ ((item.foodId?.price || 0) * item.quantity).toFixed(2) }}</p>
+                    <p class="text-sm text-gray-500">${{ (item.foodId?.price ?? 0).toFixed(2) }} each</p>
+                    <p class="font-medium">${{ ((item.foodId?.price ?? 0) * item.quantity).toFixed(2) }}</p>
                   </div>
                 </div>
               </div>
@@ -164,8 +167,8 @@
                     <p class="text-sm text-gray-500">Quantity: {{ item.quantity }}</p>
                   </div>
                   <div class="text-right">
-                    <p class="text-sm text-gray-500">${{ item.foodId?.price.toFixed(2) || '0.00' }} each</p>
-                    <p class="font-medium">${{ ((item.foodId?.price || 0) * item.quantity).toFixed(2) }}</p>
+                    <p class="text-sm text-gray-500">${{ (item.foodId?.price ?? 0).toFixed(2) }} each</p>
+                    <p class="font-medium">${{ ((item.foodId?.price ?? 0) * item.quantity).toFixed(2) }}</p>
                   </div>
                 </div>
               </div>
@@ -173,21 +176,19 @@
           </div>
         </div>
 
-        <div class="border-t pt-4 flex justify-between items-center">
-          <div>
-            <p class="text-sm text-gray-500">Payment Method</p>
-            <p class="font-medium capitalize">{{ selectedOrder.paymentMethod.replace('_', ' ') }}</p>
-          </div>
+        <div class="border-t pt-4 flex justify-end items-center">
           <div class="text-right">
             <p class="text-sm text-gray-500">Total Amount</p>
-            <p class="text-xl font-bold">${{ selectedOrder.totalPrice.toFixed(2) }}</p>
+            <p class="text-xl font-bold">
+              ${{ (dialogTotalPrice ?? 0).toFixed(2) }}
+            </p>
           </div>
         </div>
       </div>
       <template #footer>
         <div class="flex justify-end gap-2">
           <el-button @click="dialogVisible = false">Close</el-button>
-          <el-button type="primary" @click="printOrder">Print Receipt</el-button>
+          <el-button type="primary" @click="printOrder(dialogTotalPrice)">Print Receipt</el-button>
         </div>
       </template>
     </el-dialog>
@@ -244,6 +245,7 @@ const {
 const search = ref('');
 const filterStatus = ref('');
 const showFilter = ref(false);
+const dialogTotalPrice = ref(0);
 
 const resetFilters = () => {
   filterStatus.value = '';
@@ -315,7 +317,7 @@ const filteredOrders = computed(() => {
 
       if (order.pendingItems && order.pendingItems.length > 0) {
         const displayItems = order.pendingItems;
-        const totalPrice = displayItems.reduce((sum, item) => sum + (item.totalPrice || ((item.foodId?.price || 0) * item.quantity)), 0);
+        const totalPrice = displayItems.reduce((sum, item) => sum + (item.totalPrice || ((item.foodId?.price ?? 0) * item.quantity)), 0);
         expandedOrders.push({
           ...order,
           tableId: tableIdStr,
@@ -329,7 +331,7 @@ const filteredOrders = computed(() => {
 
       if (order.readyItems && order.readyItems.length > 0) {
         const displayItems = order.readyItems;
-        const totalPrice = displayItems.reduce((sum, item) => sum + (item.totalPrice || ((item.foodId?.price || 0) * item.quantity)), 0);
+        const totalPrice = displayItems.reduce((sum, item) => sum + (item.totalPrice || ((item.foodId?.price ?? 0) * item.quantity)), 0);
         expandedOrders.push({
           ...order,
           tableId: tableIdStr,
@@ -340,26 +342,19 @@ const filteredOrders = computed(() => {
           totalPrice
         });
       }
-
-      if ((!order.pendingItems || order.pendingItems.length === 0) &&
-          (!order.readyItems || order.readyItems.length === 0)) {
-        const displayItems = order.items;
-        const totalPrice = displayItems.reduce((sum, item) => sum + (item.totalPrice || ((item.foodId?.price || 0) * item.quantity)), 0);
-        expandedOrders.push({
-          ...order,
-          tableId: tableIdStr,
-          displayItems,
-          displayStatus: order.status,
-          displayType: 'regular',
-          itemIds: displayItems.map(item => item._id),
-          totalPrice
-        });
-      }
     }
   });
 
   return expandedOrders;
 });
+
+function handleViewOrder(row: DisplayOrder) {
+  const original = orders.value.find(o => o.orderCode === row.orderCode);
+  if (original) {
+    viewOrder(original);
+    dialogTotalPrice.value = row.totalPrice;
+  }
+}
 
 onMounted(() => {
   fetchOrders();

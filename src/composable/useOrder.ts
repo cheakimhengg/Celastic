@@ -1,6 +1,7 @@
 import { ref } from 'vue';
 import { ElMessage } from 'element-plus';
 import { getOrders, updateOrder as apiUpdateOrder } from './apiCalling';
+import jsPDF from 'jspdf';
 
 export interface OrderItem {
   foodId: {
@@ -99,7 +100,15 @@ export const useOrder = () => {
   }
 
   function viewOrder(order: Order) {
-    selectedOrder.value = order;
+    const allItems = [
+      ...(order.pendingItems || []),
+      ...(order.readyItems || []),
+      ...(order.items || [])
+    ];
+    selectedOrder.value = {
+      ...order,
+      items: allItems
+    };
     dialogVisible.value = true;
   }
 
@@ -115,89 +124,70 @@ export const useOrder = () => {
     }
   }
 
-  function printOrder() {
+  // Assume you have a username variable (replace with your actual username source)
+  const username = localStorage.getItem('username') || 'Restaurant';
+
+  async function printOrder(dialogTotalPrice?: number) {
     if (!selectedOrder.value) return;
-    const printWindow = window.open('', '_blank');
-    if (!printWindow) {
-      ElMessage.error('Please allow popups to print receipts');
-      return;
-    }
-    const receipt = `
-      <html>
-        <head>
-          <title>Order Receipt - ${selectedOrder.value.orderCode}</title>
-          <style>
-            body { font-family: 'Segoe UI', Arial, sans-serif; background: #f8fafc; color: #222; margin: 0; padding: 0; }
-            .receipt-container { max-width: 400px; margin: 40px auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); padding: 32px 24px; }
-            .header { text-align: center; margin-bottom: 24px; }
-            .header h2 { margin: 0 0 8px 0; font-size: 1.6rem; letter-spacing: 1px; }
-            .header .order-code { font-size: 1rem; color: #888; margin-bottom: 4px; }
-            .header .date { font-size: 0.95rem; color: #888; }
-            .divider { border-bottom: 1px solid #e5e7eb; margin: 18px 0; }
-            table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
-            th, td { padding: 8px 4px; text-align: left; }
-            th { border-bottom: 1.5px solid #e5e7eb; font-size: 1rem; color: #555; }
-            td { font-size: 1rem; }
-            .item-qty, .item-price, .item-subtotal { text-align: right; }
-            .total-row td { font-weight: bold; font-size: 1.15rem; border-top: 2px solid #e5e7eb; padding-top: 10px; }
-            .footer { text-align: center; margin-top: 28px; color: #666; font-size: 1rem; }
-            .footer .thanks { font-size: 1.1rem; font-weight: 500; margin-bottom: 6px; }
-            .footer .pay-method { color: #222; font-weight: 500; }
-            @media print {
-              body { background: #fff; }
-              .receipt-container { box-shadow: none; margin: 0; }
-              .no-print { display: none; }
-            }
-          </style>
-        </head>
-        <body>
-          <div class="receipt-container">
-            <div class="header">
-              <h2>Nhamey Restaurant</h2>
-              <div class="order-code">Order Code: <b>${selectedOrder.value.orderCode}</b></div>
-              <div class="date">${new Date(selectedOrder.value.createdAt).toLocaleString()}</div>
-            </div>
-            <div class="divider"></div>
-            <table>
-              <thead>
-                <tr>
-                  <th>Item</th>
-                  <th class="item-qty">Qty</th>
-                  <th class="item-price">Unit</th>
-                  <th class="item-subtotal">Subtotal</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${selectedOrder.value.items.map(item => `
-                  <tr>
-                    <td>${item.foodId?.foodName || 'Unknown Item'}</td>
-                    <td class="item-qty">${item.quantity}</td>
-                    <td class="item-price">$${(item.foodId?.price || 0).toFixed(2)}</td>
-                    <td class="item-subtotal">$${((item.foodId?.price || 0) * item.quantity).toFixed(2)}</td>
-                  </tr>
-                `).join('')}
-              </tbody>
-              <tfoot>
-                <tr class="total-row">
-                  <td colspan="3">Total</td>
-                  <td class="item-subtotal">$${selectedOrder.value.totalPrice.toFixed(2)}</td>
-                </tr>
-              </tfoot>
-            </table>
-            <div class="divider"></div>
-            <div class="footer">
-              <div class="thanks">Thank you for your order!</div>
-              <div class="pay-method">Payment Method: ${selectedOrder.value.paymentMethod.replace('_', ' ')}</div>
-            </div>
-            <div class="no-print" style="text-align: center; margin-top: 20px;">
-              <button onclick="window.print()" style="padding: 8px 24px; border-radius: 6px; border: none; background: #409eff; color: #fff; font-size: 1rem; cursor: pointer;">Print Receipt</button>
-            </div>
-          </div>
-        </body>
-      </html>
-    `;
-    printWindow.document.write(receipt);
-    printWindow.document.close();
+    const doc = new jsPDF();
+
+    // Header
+    doc.setFontSize(20);
+    doc.setFont('helvetica', 'bold');
+    doc.text(username, 105, 32, { align: 'center' });
+
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'normal');
+    // Display order code, date, table, and status in one block
+    doc.text(`Order Code: ${selectedOrder.value.orderCode}`, 15, 42);
+    doc.text(`Date: ${new Date(selectedOrder.value.createdAt).toLocaleString()}`, 15, 50);
+    doc.text(`Table: ${selectedOrder.value.tableId ?? '-'}`, 15, 58);
+    doc.text(`Status: ${selectedOrder.value.status.charAt(0).toUpperCase() + selectedOrder.value.status.slice(1)}`, 15, 66);
+
+    // Separator
+    doc.setLineWidth(0.5);
+    doc.line(15, 72, 195, 72);
+
+    // Table headers
+    let y = 80;
+    doc.setFont('helvetica', 'bold');
+    doc.text('Item', 15, y);
+    doc.text('Qty', 90, y, { align: 'right' });
+    doc.text('Unit', 120, y, { align: 'right' });
+    doc.text('Subtotal', 195, y, { align: 'right' });
+
+    y += 6;
+    doc.setLineWidth(0.1);
+    doc.line(15, y, 195, y);
+
+    // Items
+    doc.setFont('helvetica', 'normal');
+    (selectedOrder.value.items || []).forEach(item => {
+      y += 8;
+      doc.text(item.foodId?.foodName || 'Unknown', 15, y);
+      doc.text(String(item.quantity), 90, y, { align: 'right' });
+      doc.text(`$${(item.foodId?.price ?? 0).toFixed(2)}`, 120, y, { align: 'right' });
+      doc.text(`$${((item.foodId?.price ?? 0) * item.quantity).toFixed(2)}`, 195, y, { align: 'right' });
+    });
+
+    // Total
+    y += 10;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.text('Total:', 120, y, { align: 'right' });
+    const total = dialogTotalPrice !== undefined ? dialogTotalPrice : selectedOrder.value.totalPrice ?? 0;
+    doc.text(`$${(total).toFixed(2)}`, 195, y, { align: 'right' });
+
+    // Footer
+    y += 20;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(12);
+    doc.text('Thank you for your order!', 105, y, { align: 'center' });
+    y += 8;
+    doc.setFontSize(10);
+    doc.text('Contact: 012 345 678 | example@email.com', 105, y, { align: 'center' });
+
+    doc.save(`Receipt-${selectedOrder.value.orderCode}.pdf`);
   }
 
   async function markItemAsReady(order: Order, item: OrderItem) {
