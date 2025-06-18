@@ -18,9 +18,11 @@ export interface Order {
   webID: string;
   tableId: string | null;
   items: OrderItem[];
+  pendingItems: OrderItem[];
+  readyItems: OrderItem[];
   totalPrice: number;
-  status: 'pending' | 'preparing' | 'ready' | 'completed' | 'cancelled';
-  paymentStatus: 'pending' | 'paid' | 'failed';
+  status: 'pending' | 'ready' | 'completed' | 'cancelled';
+  paymentStatus: 'pending' | 'paid';
   paymentMethod: string;
   createdAt: string;
   __v: number;
@@ -53,14 +55,17 @@ export const useOrder = () => {
     }
   };
 
-  const updateOrder = async (order: Order) => {
+  const updateOrder = async (order: Order & { itemIds?: string[] }) => {
     isLoading.value = true;
     try {
-      const payload = {
+      const payload: Record<string, unknown> = {
         orderCode: order.orderCode,
-        orderStatus: order.status,
+        status: order.status,
         paymentStatus: order.paymentStatus,
       };
+      if (order.itemIds) {
+        payload.itemIds = order.itemIds;
+      }
       const response = await apiUpdateOrder(payload);
       if (response.statusCode === 200) {
         ElMessage.success(response.message || 'Order updated successfully!');
@@ -78,7 +83,6 @@ export const useOrder = () => {
   function getStatusType(status: string) {
     switch (status) {
       case 'pending': return 'warning';
-      case 'preparing': return 'info';
       case 'ready': return 'primary';
       case 'completed': return 'success';
       case 'cancelled': return 'danger';
@@ -90,7 +94,6 @@ export const useOrder = () => {
     switch (status) {
       case 'pending': return 'warning';
       case 'paid': return 'success';
-      case 'failed': return 'danger';
       default: return '';
     }
   }
@@ -107,7 +110,7 @@ export const useOrder = () => {
 
   async function onUpdateOrder() {
     if (editingOrder.value) {
-      await updateOrder(editingOrder.value);
+      await updateOrder(editingOrder.value as Order & { itemIds?: string[] });
       updateDialogVisible.value = false;
     }
   }
@@ -197,6 +200,86 @@ export const useOrder = () => {
     printWindow.document.close();
   }
 
+  async function markItemAsReady(order: Order, item: OrderItem) {
+    try {
+      const payload = {
+        orderCode: order.orderCode,
+        itemId: item._id,
+        status: 'ready'
+      };
+      const response = await apiUpdateOrder(payload);
+      if (response.statusCode === 200) {
+        ElMessage.success('Item marked as ready');
+        await fetchOrders();
+      } else {
+        ElMessage.error(response.message || 'Failed to update item status');
+      }
+    } catch (error) {
+      console.error('Update item status error:', error);
+      ElMessage.error('Failed to update item status');
+    }
+  }
+
+  async function markItemsAsReady(order: Order, items: OrderItem[]) {
+    try {
+      const payload = {
+        orderCode: order.orderCode,
+        itemIds: items.map(item => item._id),
+        status: 'ready'
+      };
+      const response = await apiUpdateOrder(payload);
+      if (response.statusCode === 200) {
+        ElMessage.success('Items marked as ready');
+        await fetchOrders();
+      } else {
+        ElMessage.error(response.message || 'Failed to update items status');
+      }
+    } catch (error) {
+      console.error('Update items status error:', error);
+      ElMessage.error('Failed to update items status');
+    }
+  }
+
+  async function markItemAsCompleted(order: Order, item: OrderItem) {
+    try {
+      const payload = {
+        orderCode: order.orderCode,
+        itemId: item._id,
+        status: 'completed'
+      };
+      const response = await apiUpdateOrder(payload);
+      if (response.statusCode === 200) {
+        ElMessage.success('Item marked as completed');
+        await fetchOrders();
+      } else {
+        ElMessage.error(response.message || 'Failed to update item status');
+      }
+    } catch (error) {
+      console.error('Update item status error:', error);
+      ElMessage.error('Failed to update item status');
+    }
+  }
+
+  async function markItemsAsCompleted(order: Order, items: OrderItem[]) {
+    try {
+      const payload = {
+        orderCode: order.orderCode,
+        itemIds: items.map(item => item._id),
+        status: 'completed'
+      };
+      const response = await apiUpdateOrder(payload);
+      if (response.statusCode === 200) {
+        ElMessage.success('Items marked as completed');
+        await fetchOrders();
+      } else {
+        ElMessage.error(response.message || 'Failed to update items status');
+      }
+    } catch (error) {
+      console.error('Update items status error:', error);
+      ElMessage.error('Failed to update items status');
+    }
+  }
+
   return {
     orders,
     fetchOrders,
@@ -212,5 +295,9 @@ export const useOrder = () => {
     editOrder,
     onUpdateOrder,
     printOrder,
+    markItemAsReady,
+    markItemsAsReady,
+    markItemAsCompleted,
+    markItemsAsCompleted
   };
 };

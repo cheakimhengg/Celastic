@@ -17,7 +17,7 @@ import Sidebar from './components/Sidebar.vue';
 import Navbar from './components/Navbar.vue';
 import { ref } from 'vue';
 
-const isOpen = ref(true);
+const isOpen = ref(false);
 
 const toggleSidebar = () => {
   isOpen.value = !isOpen.value;
