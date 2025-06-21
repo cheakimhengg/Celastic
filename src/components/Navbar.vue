@@ -7,7 +7,7 @@
     </button>
     <div class="flex items-center gap-4 user-name text-right">
       <!-- Notification Bell with Badge -->
-      <div class="relative cursor-pointer group" @click="handleNotificationClick">
+      <div class="relative cursor-pointer group mt-1" @click="handleNotificationClick">
         <el-icon class="text-gray-600 group-hover:text-primary transition-colors duration-200">
           <Bell />
         </el-icon>
