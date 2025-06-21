@@ -1,6 +1,6 @@
 <template>
   <el-menu active-text-color="#409eff" background-color="ffffff" class="el-menu-vertical-demo h-[calc(100vh-3.75rem)]"
-    :collapse="props.isOpen" default-active="2" text-color="#000000" router>
+    :collapse="props.isOpen" default-active="2" :default-openeds="['2', '3']" text-color="#000000" router>
     <el-menu-item index="/admin/dashboard">
       <el-icon>
         <Monitor />
@@ -57,7 +57,7 @@
         </template>
       </el-menu-item>
     </el-sub-menu>
-    <el-sub-menu index="4">
+    <!-- <el-sub-menu index="4">
       <template #title>
         <el-icon>
           <PieChart />
@@ -72,12 +72,12 @@
           <span>4.1 Reports</span>
         </template>
       </el-menu-item>
-    </el-sub-menu>
+    </el-sub-menu> -->
   </el-menu>
 </template>
 
 <script lang="ts" setup>
-import { Menu, List, Monitor, Food, Tickets, Histogram, PieChart, Grid } from '@element-plus/icons-vue';
+import { Menu, List, Monitor, Food, Tickets, Histogram, Grid } from '@element-plus/icons-vue';
 
 const props = defineProps({
   isOpen: {

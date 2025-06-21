@@ -10,6 +10,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     BaseDoughnutChart: typeof import('./src/components/charts/BaseDoughnutChart.vue')['default']
     BaseLineChart: typeof import('./src/components/charts/BaseLineChart.vue')['default']
+    ElBadge: typeof import('element-plus/es')['ElBadge']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCard: typeof import('element-plus/es')['ElCard']
     ElDialog: typeof import('element-plus/es')['ElDialog']

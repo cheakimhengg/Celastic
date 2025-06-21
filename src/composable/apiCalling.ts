@@ -121,3 +121,8 @@ export const uploadImage = async (file: File) => {
   formData.append('image', file);
   return await postMultipart('/upload/image', formData);
 };
+
+// Pending order count function
+export const getPendingOrderCount = async (params: object) => {
+  return await fetchData('/pending-order-count', params);
+};
