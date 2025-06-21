@@ -5,6 +5,7 @@ import {
   createFood as apiCreateFood,
   deleteFood as apiDeleteFood,
   updateFood as apiUpdateFood,
+  uploadImage as apiUploadImage,
 } from './apiCalling';
 import type { FoodItem, FoodApiCategory, FoodApiItem } from '@/models/food';
 
@@ -35,7 +36,7 @@ export const useFood = () => {
       { type: 'number', min: 0.01, message: 'Price must be greater than 0', trigger: 'blur' },
     ],
     category: [{ required: true, message: 'Category is required', trigger: 'blur' }],
-    imgUrl: [{ required: true, message: 'Image URL is required', trigger: 'blur' }],
+    imgUrl: [{ required: false, message: 'Image is optional', trigger: 'change' }],
     status: [{ required: true, message: 'Status is required', trigger: 'change' }],
   });
   const foods = ref<FoodItem[]>([]);
@@ -145,6 +146,26 @@ export const useFood = () => {
     }
   };
 
+  // Upload image
+  const uploadImage = async (file: File): Promise<string> => {
+    isLoading.value = true;
+    try {
+      const response = await apiUploadImage(file);
+      if (response.statusCode === 200 && response.data?.accessUrl) {
+        return response.data.accessUrl;
+      } else {
+        throw new Error(response.message || 'Image upload failed to return a valid URL.');
+      }
+    } catch (error) {
+      console.error('Upload image error:', error);
+      const message = error instanceof Error ? error.message : 'An unknown error occurred';
+      ElMessage.error(`Upload failed: ${message}`);
+      throw error;
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
   // Form handlers for UI
   const handleCreateFood = async () => {
     if (!foodFormRef.value) return;
@@ -176,6 +197,7 @@ export const useFood = () => {
     handleCreateFood,
     handleUpdateFood,
     handleDeleteFood,
+    uploadImage,
     foodForm,
     foodFormRef,
     rules,

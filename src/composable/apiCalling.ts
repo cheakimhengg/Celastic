@@ -31,6 +31,26 @@ export const fetchData = async (endpoint: string, params: object) => {
   }
 };
 
+/**
+ * A helper function to post multipart/form-data.
+ * @param {string} endpoint - The API endpoint.
+ * @param {FormData} formData - The FormData object to post.
+ * @returns The response data.
+ */
+const postMultipart = async (endpoint: string, formData: FormData) => {
+  try {
+    const response = await apiClient.post(endpoint, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Multipart API Error:', error);
+    throw error;
+  }
+};
+
 export const getLogin = async (params: object) => {
   return await fetchData('/auth/login', params);
 };
@@ -93,4 +113,11 @@ export const getOrders = async (params: object) => {
 
 export const updateOrder = async (params: object) => {
   return await fetchData('/payment-status', params);
+};
+
+// Image upload function
+export const uploadImage = async (file: File) => {
+  const formData = new FormData();
+  formData.append('image', file);
+  return await postMultipart('/upload/image', formData);
 };

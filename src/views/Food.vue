@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full min-h-screen bg-[#fafbfc] p-6 md:p-10" v-loading="isLoading">
+  <div class="w-full min-h-screen bg-[#fafbfc] p-6 md:p-10" v-loading="isLoading || isUploading">
     <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
       <h1 class="text-2xl font-bold text-gray-900">Food Management</h1>
       <div class="flex items-center gap-3 w-full md:w-auto">
@@ -97,7 +97,7 @@
           <el-input v-model.number="foodForm.price" type="number" min="0" placeholder="Enter price" clearable />
         </el-form-item>
         <el-form-item label="Image" prop="imgUrl">
-          <el-input v-model="foodForm.imgUrl" placeholder="Paste image URL" clearable />
+          <ImageUpload v-model="foodForm.imgUrl" @file-selected="handleImageSelected" />
         </el-form-item>
         <el-form-item label="Status" prop="status">
           <el-select v-model="foodForm.status" placeholder="Select status" clearable>
@@ -125,7 +125,9 @@ import { ref, computed, onMounted, nextTick } from 'vue';
 import { Search, Filter, Plus, Edit, Delete } from '@element-plus/icons-vue';
 import { useFood } from '@/composable/useFood';
 import { useCategory } from '@/composable/useCategory';
+import { useImageUpload } from '@/composable/useImageUpload';
 import type { FoodItem } from '@/models/food';
+import ImageUpload from '@/components/ImageUpload.vue';
 
 const {
   foods,
@@ -138,6 +140,8 @@ const {
   rules,
   isLoading
 } = useFood();
+
+const { isUploading, upload } = useImageUpload();
 
 // Use categories from API
 const {
@@ -237,6 +241,13 @@ async function deleteFood(row: FoodItem) {
 function resetFilters() {
   filterCategory.value = '';
   filterStatus.value = '';
+}
+
+async function handleImageSelected(file: File) {
+  const imageUrl = await upload(file);
+  if (imageUrl) {
+    foodForm.value.imgUrl = imageUrl;
+  }
 }
 
 onMounted(() => {
