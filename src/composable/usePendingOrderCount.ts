@@ -44,7 +44,7 @@ export function usePendingOrderCount() {
     stopSoundInterval();
     if (canPlaySound.value && pendingCount.value > 0) {
       playNotificationSound();
-      soundIntervalId = setInterval(playNotificationSound, 20000); // Play every 20 seconds
+      soundIntervalId = setInterval(playNotificationSound, 30000); // Play every 30 seconds
     }
   };
 
@@ -69,7 +69,7 @@ export function usePendingOrderCount() {
 
   const startAutoRefresh = () => {
     stopAutoRefresh();
-    refreshIntervalId = setInterval(fetchPendingCount, 600000); // Refresh every 10 minutes
+    refreshIntervalId = setInterval(fetchPendingCount, 60000); // Refresh every 1 minute
   };
 
   const stopAutoRefresh = () => {
