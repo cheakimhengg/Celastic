@@ -3,7 +3,7 @@
     <Navbar :toggle-sidebar="toggleSidebar" />
     <div class="flex flex-row">
       <Sidebar :is-open="isOpen" />
-      <div class="flex-1 min-w-0">
+      <div class="flex-1 min-w-0 h-[calc(100vh-3.75rem)] overflow-y-auto">
         <RouterView />
       </div>
     </div>

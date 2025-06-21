@@ -18,6 +18,7 @@
           </el-icon>
           <span class="ml-1">Filter</span>
         </el-button>
+        <el-button @click="exportToExcel" :icon="Download">Export</el-button>
       </div>
     </div>
 
@@ -223,8 +224,10 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import { Search, Edit, View, Filter } from '@element-plus/icons-vue';
+import * as XLSX from 'xlsx';
+import { Search, Edit, View, Filter, Download } from '@element-plus/icons-vue';
 import { useOrder } from '@/composable/useOrder';
+import type { OrderItem as OrderItemType } from '@/composable/useOrder';
 
 const {
   orders,
@@ -248,6 +251,7 @@ const showFilter = ref(false);
 const dialogTotalPrice = ref(0);
 
 const resetFilters = () => {
+  search.value = '';
   filterStatus.value = '';
 };
 
@@ -355,6 +359,34 @@ function handleViewOrder(row: DisplayOrder) {
     dialogTotalPrice.value = row.totalPrice;
   }
 }
+
+const formatItems = (items: OrderItemType[]) => {
+  if (!items || items.length === 0) return 'No Items';
+  return items.map(item => `${item.foodId?.foodName || 'Unknown'} (x${item.quantity})`).join(', ');
+};
+
+const exportToExcel = () => {
+  if (filteredOrders.value.length === 0) {
+    alert("No orders to export.");
+    return;
+  }
+
+  const dataToExport = filteredOrders.value.map(order => ({
+    "Order Code": order.orderCode,
+    "Table": order.tableId || '-',
+    "Items": formatItems(order.displayItems),
+    "Total Price": order.totalPrice,
+    "Status": order.status,
+    "Payment Status": order.paymentStatus,
+    "Date": new Date(order.createdAt).toLocaleString(),
+  }));
+
+  const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Orders");
+
+  XLSX.writeFile(workbook, "Order_Report.xlsx");
+};
 
 onMounted(() => {
   fetchOrders();

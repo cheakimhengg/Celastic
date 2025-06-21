@@ -126,3 +126,7 @@ export const uploadImage = async (file: File) => {
 export const getPendingOrderCount = async (params: object) => {
   return await fetchData('/pending-order-count', params);
 };
+
+export const getDashboardData = async (params: object) => {
+  return await fetchData('/report/dashboard', params);
+};
